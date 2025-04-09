@@ -1,5 +1,8 @@
-import { useLocation } from "react-router-dom";
+
+import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
+import ComicPanel from "../components/ComicPanel";
+import SpeechBubble from "../components/SpeechBubble";
 
 const NotFound = () => {
   const location = useLocation();
@@ -12,13 +15,22 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
-          Return to Home
-        </a>
+    <div className="min-h-screen w-full pl-20 py-8 px-4 md:px-8 flex items-center justify-center">
+      <div className="max-w-xl w-full animate-float">
+        <ComicPanel title="Page Not Found!">
+          <div className="text-center py-8">
+            <h2 className="font-bangers text-6xl text-comic-pink mb-4">404</h2>
+            <SpeechBubble>
+              <p className="font-comic text-lg">Oh no! This page seems to have vanished into another dimension!</p>
+            </SpeechBubble>
+            
+            <div className="mt-8">
+              <Link to="/" className="comic-button inline-block">
+                Return to Home Base
+              </Link>
+            </div>
+          </div>
+        </ComicPanel>
       </div>
     </div>
   );
