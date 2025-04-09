@@ -7,6 +7,8 @@ interface ComicPanelProps {
   className?: string;
   flippable?: boolean;
   backContent?: React.ReactNode;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 const ComicPanel = ({ 
@@ -14,7 +16,9 @@ const ComicPanel = ({
   children, 
   className = "", 
   flippable = false,
-  backContent
+  backContent,
+  onMouseEnter,
+  onMouseLeave
 }: ComicPanelProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -24,7 +28,11 @@ const ComicPanel = ({
 
   if (flippable) {
     return (
-      <div className={`comic-book-cover ${className}`}>
+      <div 
+        className={`comic-book-cover ${className}`}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+      >
         <div 
           className={`comic-panel comic-book-page ${isFlipped ? 'flipped' : ''}`} 
           onClick={handleFlip}
@@ -53,7 +61,11 @@ const ComicPanel = ({
   }
 
   return (
-    <div className={`comic-panel ${className}`}>
+    <div 
+      className={`comic-panel ${className}`}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       <h3 className="comic-panel-header">{title}</h3>
       {children}
     </div>
