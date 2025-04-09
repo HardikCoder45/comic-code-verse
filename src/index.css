@@ -71,33 +71,63 @@
     @apply font-bangers text-2xl md:text-3xl mb-4 text-comic-blue;
   }
   
+  /* Speech bubble styles */
   .speech-bubble {
-    @apply relative bg-white p-4 rounded-2xl border-2 border-comic-border;
+    @apply relative p-4 rounded-2xl border-2 border-comic-border;
   }
   
   .speech-bubble:after {
     content: '';
-    @apply absolute w-4 h-4 bg-white border-r-2 border-b-2 border-comic-border transform rotate-45;
+    @apply absolute w-4 h-4 border-r-2 border-b-2 border-comic-border transform rotate-45;
     bottom: -10px;
     left: 30px;
   }
   
   .thought-bubble {
-    @apply relative bg-white p-4 rounded-full border-2 border-comic-border;
+    @apply relative p-4 rounded-full border-2 border-comic-border;
   }
   
   .thought-bubble:before {
     content: '';
-    @apply absolute w-4 h-4 bg-white rounded-full border-2 border-comic-border;
+    @apply absolute w-4 h-4 rounded-full border-2 border-comic-border;
     bottom: -10px;
     right: 20px;
   }
   
   .thought-bubble:after {
     content: '';
-    @apply absolute w-2 h-2 bg-white rounded-full border-2 border-comic-border;
+    @apply absolute w-2 h-2 rounded-full border-2 border-comic-border;
     bottom: -16px;
     right: 12px;
+  }
+  
+  .shout-bubble {
+    @apply relative p-4 border-2 border-comic-border;
+    clip-path: polygon(0% 0%, 100% 0%, 95% 70%, 85% 70%, 75% 100%, 65% 70%, 0% 70%);
+  }
+  
+  .whisper-bubble {
+    @apply relative p-4 rounded-2xl border-2 border-comic-border border-dashed;
+  }
+  
+  /* Positions for speech bubbles */
+  .bubble-left:after {
+    left: 30px;
+  }
+  
+  .bubble-right:after {
+    left: auto;
+    right: 30px;
+  }
+  
+  .bubble-top:after {
+    bottom: auto;
+    top: -10px;
+    transform: rotate(-135deg);
+  }
+  
+  .bubble-bottom:after {
+    bottom: -10px;
   }
   
   .skill-badge {
@@ -117,7 +147,7 @@
   }
   
   .code-block {
-    @apply bg-gray-900 text-white p-4 rounded-lg border-2 border-comic-border font-mono text-sm overflow-x-auto;
+    @apply bg-gray-900 text-white rounded-lg border-2 border-comic-border font-mono text-sm overflow-x-auto;
   }
 }
 
@@ -147,4 +177,104 @@
   backface-visibility: hidden;
   transform: rotateY(180deg);
   transform-origin: left center;
+}
+
+/* Extended animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(5deg);
+  }
+  75% {
+    transform: rotate(-5deg);
+  }
+}
+
+@keyframes flip {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(180deg);
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-shake {
+  animation: shake 2s ease-in-out infinite;
+}
+
+.animate-flip {
+  animation: flip 0.6s ease-in-out;
+}
+
+.animate-pop {
+  animation: pop 0.3s ease-out forwards;
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Line numbers for code blocks */
+.line-numbers .line-numbers-rows {
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  font-size: 100%;
+  left: -3.8em;
+  width: 3em;
+  letter-spacing: -1px;
+  border-right: 1px solid #999;
+  user-select: none;
+}
+
+.line-numbers-rows > span {
+  display: block;
+  counter-increment: linenumber;
+}
+
+.line-numbers-rows > span:before {
+  content: counter(linenumber);
+  color: #999;
+  display: block;
+  padding-right: 0.8em;
+  text-align: right;
 }
