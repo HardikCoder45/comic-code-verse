@@ -2,29 +2,40 @@
 import React, { useState, useEffect } from 'react';
 import SpeechBubble from './SpeechBubble';
 import { motion, AnimatePresence } from 'framer-motion';
+import EasterEgg from './EasterEgg';
+import { Code, Github, Star, Coffee, Lightbulb, Rocket } from 'lucide-react';
 
 interface AvatarMessage {
   id: number;
   text: string;
   type: 'speech' | 'thought' | 'shout' | 'whisper';
+  icon?: React.ReactNode;
 }
 
-const messages: AvatarMessage[] = [
-  { id: 1, text: "Welcome to my comic portfolio! Click around to explore my projects!", type: 'speech' },
-  { id: 2, text: "Check out my latest project in the Projects section!", type: 'speech' },
-  { id: 3, text: "Want to know more about me? Visit the About page!", type: 'speech' },
-  { id: 4, text: "WOAH! Did you just find an Easter egg?", type: 'shout' },
-  { id: 5, text: "I know React, JavaScript, and many other technologies...", type: 'thought' },
-  { id: 6, text: "psst... try clicking on different parts of the comic panels...", type: 'whisper' },
+const avatarImages = [
+  "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158", // Placeholder, replace with actual avatar images
+  "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+  "https://images.unsplash.com/photo-1426604966848-d7adac402bff"
 ];
 
-const avatarEmotions = ['neutral', 'happy', 'excited', 'thinking'];
+const messages: AvatarMessage[] = [
+  { id: 1, text: "Welcome to my comic portfolio! Click around to explore my projects!", type: 'speech', icon: <Star className="text-comic-yellow" /> },
+  { id: 2, text: "Check out my latest project in the Projects section!", type: 'speech', icon: <Code className="text-comic-blue" /> },
+  { id: 3, text: "Want to know more about me? Visit the About page!", type: 'speech', icon: <Github className="text-comic-purple" /> },
+  { id: 4, text: "WOAH! Did you just find an Easter egg?", type: 'shout', icon: <Rocket className="text-comic-orange" /> },
+  { id: 5, text: "I know React, JavaScript, and many other technologies...", type: 'thought', icon: <Lightbulb className="text-comic-yellow" /> },
+  { id: 6, text: "psst... try clicking on different parts of the comic panels...", type: 'whisper', icon: <Coffee className="text-comic-orange" /> },
+];
+
+const avatarEmotions = ['neutral', 'happy', 'excited', 'thinking', 'surprised', 'curious'];
 
 const InteractiveAvatar = () => {
   const [currentMessage, setCurrentMessage] = useState<AvatarMessage>(messages[0]);
   const [emotion, setEmotion] = useState('neutral');
   const [isVisible, setIsVisible] = useState(true);
   const [isInteracting, setIsInteracting] = useState(false);
+  const [avatarIndex, setAvatarIndex] = useState(0);
+  const [showEmotionSelector, setShowEmotionSelector] = useState(false);
 
   useEffect(() => {
     if (!isInteracting) {
@@ -43,7 +54,7 @@ const InteractiveAvatar = () => {
   const handleInteraction = () => {
     setIsInteracting(true);
     setEmotion('excited');
-    setCurrentMessage({ id: 99, text: "Hey there! Thanks for saying hi! Feel free to explore my portfolio.", type: 'speech' });
+    setCurrentMessage({ id: 99, text: "Hey there! Thanks for saying hi! Feel free to explore my portfolio. Did you know there are secret Easter eggs hidden throughout the site?", type: 'speech', icon: <Star className="text-comic-yellow" /> });
     
     setTimeout(() => {
       setIsInteracting(false);
@@ -53,16 +64,99 @@ const InteractiveAvatar = () => {
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
   };
+  
+  const changeAvatar = () => {
+    setAvatarIndex((prev) => (prev + 1) % avatarImages.length);
+  };
+  
+  const toggleEmotionSelector = () => {
+    setShowEmotionSelector(!showEmotionSelector);
+  };
+  
+  const setSpecificEmotion = (newEmotion: string) => {
+    setEmotion(newEmotion);
+    setShowEmotionSelector(false);
+    
+    // Set a corresponding message for this emotion
+    switch(newEmotion) {
+      case 'happy':
+        setCurrentMessage({ id: 101, text: "I'm feeling great today! Ready to show you my best projects!", type: 'speech', icon: <Star className="text-comic-yellow" /> });
+        break;
+      case 'excited':
+        setCurrentMessage({ id: 102, text: "Wow! I'm super excited about what I've been working on recently!", type: 'shout', icon: <Rocket className="text-comic-orange" /> });
+        break;
+      case 'thinking':
+        setCurrentMessage({ id: 103, text: "Hmm, I wonder what new technologies I should learn next...", type: 'thought', icon: <Lightbulb className="text-comic-yellow" /> });
+        break;
+      case 'surprised':
+        setCurrentMessage({ id: 104, text: "Oh! Did you find that hidden feature already?", type: 'speech', icon: <Star className="text-comic-pink" /> });
+        break;
+      case 'curious':
+        setCurrentMessage({ id: 105, text: "I'm curious - which of my projects do you find most interesting?", type: 'speech', icon: <Lightbulb className="text-comic-green" /> });
+        break;
+      default:
+        setCurrentMessage({ id: 100, text: "Hello! I'm glad you're exploring my portfolio!", type: 'speech', icon: <Star className="text-comic-yellow" /> });
+    }
+    
+    setIsInteracting(true);
+    setTimeout(() => {
+      setIsInteracting(false);
+    }, 5000);
+  };
 
   return (
     <div className="fixed right-6 bottom-24 z-50">
       <div className="flex flex-col items-end">
-        <button 
-          onClick={toggleVisibility}
-          className="mb-2 bg-comic-orange text-white rounded-full w-8 h-8 flex items-center justify-center border-2 border-black shadow-md hover:bg-comic-pink transition-colors"
-        >
-          {isVisible ? 'X' : '👤'}
-        </button>
+        <div className="flex space-x-2 mb-2">
+          <button 
+            onClick={toggleEmotionSelector}
+            className="bg-comic-purple text-white rounded-full w-8 h-8 flex items-center justify-center border-2 border-black shadow-md hover:bg-comic-pink transition-colors"
+            title="Change emotion"
+          >
+            😊
+          </button>
+          <button 
+            onClick={changeAvatar}
+            className="bg-comic-green text-white rounded-full w-8 h-8 flex items-center justify-center border-2 border-black shadow-md hover:bg-comic-pink transition-colors"
+            title="Change avatar"
+          >
+            👤
+          </button>
+          <button 
+            onClick={toggleVisibility}
+            className="bg-comic-orange text-white rounded-full w-8 h-8 flex items-center justify-center border-2 border-black shadow-md hover:bg-comic-pink transition-colors"
+            title={isVisible ? "Hide avatar" : "Show avatar"}
+          >
+            {isVisible ? 'X' : '👤'}
+          </button>
+        </div>
+        
+        <AnimatePresence>
+          {showEmotionSelector && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 20 }}
+              className="mb-2 bg-white rounded-lg border-2 border-comic-border p-2 flex space-x-2"
+            >
+              {avatarEmotions.map((em) => (
+                <button 
+                  key={em}
+                  onClick={() => setSpecificEmotion(em)}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${emotion === em ? 'border-comic-blue' : 'border-gray-300'} hover:border-comic-pink transition-colors`}
+                  title={em}
+                >
+                  {em === 'neutral' && '😐'}
+                  {em === 'happy' && '😊'}
+                  {em === 'excited' && '😃'}
+                  {em === 'thinking' && '🤔'}
+                  {em === 'surprised' && '😮'}
+                  {em === 'curious' && '🧐'}
+                </button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
         
         <AnimatePresence>
           {isVisible && (
@@ -74,29 +168,51 @@ const InteractiveAvatar = () => {
             >
               <div className="mb-2">
                 <SpeechBubble type={currentMessage.type} color="yellow" position="left" animated>
-                  <p className="font-comic">{currentMessage.text}</p>
+                  <div className="flex items-center">
+                    {currentMessage.icon && <div className="mr-2">{currentMessage.icon}</div>}
+                    <p className="font-comic">{currentMessage.text}</p>
+                  </div>
                 </SpeechBubble>
               </div>
               
-              <motion.div 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleInteraction}
-                className="relative cursor-pointer"
-              >
-                <div className="w-20 h-20 bg-comic-blue rounded-full border-4 border-black overflow-hidden">
-                  <div className="w-full h-full bg-[url('/placeholder.svg')] bg-center bg-cover">
-                    {/* Avatar image would go here */}
+              <EasterEgg
+                type="joke"
+                trigger="hover"
+                content={
+                  <div>
+                    <p className="font-bold mb-1">Developer Joke:</p>
+                    <p>Why do programmers prefer dark mode? Because light attracts bugs!</p>
                   </div>
-                </div>
-                
-                <div className={`absolute bottom-0 right-0 w-6 h-6 rounded-full border-2 border-black ${
-                  emotion === 'neutral' ? 'bg-gray-300' :
-                  emotion === 'happy' ? 'bg-comic-green' :
-                  emotion === 'excited' ? 'bg-comic-orange' : 'bg-comic-purple'
-                }`}>
-                </div>
-              </motion.div>
+                }
+              >
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleInteraction}
+                  className="relative cursor-pointer"
+                >
+                  <div className="w-20 h-20 bg-comic-blue rounded-full border-4 border-black overflow-hidden">
+                    <motion.div 
+                      className="w-full h-full bg-center bg-cover"
+                      style={{ backgroundImage: `url(${avatarImages[avatarIndex]})` }}
+                      animate={{ 
+                        scale: isInteracting ? [1, 1.05, 1] : 1 
+                      }}
+                      transition={{ duration: 0.5, repeat: isInteracting ? 1 : 0 }}
+                    />
+                  </div>
+                  
+                  <div className={`absolute bottom-0 right-0 w-6 h-6 rounded-full border-2 border-black ${
+                    emotion === 'neutral' ? 'bg-gray-300' :
+                    emotion === 'happy' ? 'bg-comic-green' :
+                    emotion === 'excited' ? 'bg-comic-orange' : 
+                    emotion === 'thinking' ? 'bg-comic-purple' :
+                    emotion === 'surprised' ? 'bg-comic-pink' :
+                    emotion === 'curious' ? 'bg-comic-blue' : 'bg-gray-300'
+                  }`}>
+                  </div>
+                </motion.div>
+              </EasterEgg>
             </motion.div>
           )}
         </AnimatePresence>

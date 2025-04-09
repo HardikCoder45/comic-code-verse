@@ -1,0 +1,328 @@
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-5px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes flash {
+  0%, 50%, 100% {
+    opacity: 1;
+  }
+  25%, 75% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+.animate-flash {
+  animation: flash 0.5s ease-in-out;
+}
+
+.animate-pop {
+  animation: pop 0.3s ease-out forwards;
+}
+
+.animate-bounce {
+  animation: bounce 1s ease infinite;
+}
+
+.animate-pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Comic specific animations */
+.comic-book-cover {
+  perspective: 1000px;
+  position: relative;
+}
+
+.comic-book-page {
+  backface-visibility: hidden;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.comic-book-page.flipped {
+  transform: rotateY(180deg);
+}
+
+.comic-book-page-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  transform: rotateY(-180deg);
+  transform-style: preserve-3d;
+}
+
+/* Speech bubble animations */
+.speech-bubble {
+  position: relative;
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  border: 2px solid black;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2);
+}
+
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 10px solid transparent;
+}
+
+.bubble-left::after {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-right-color: inherit;
+}
+
+.bubble-right::after {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left-color: inherit;
+}
+
+.bubble-top::after {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-bottom-color: inherit;
+}
+
+.bubble-bottom::after {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top-color: inherit;
+}
+
+/* Thought bubble */
+.thought-bubble {
+  position: relative;
+  background: white;
+  border-radius: 30px;
+  padding: 1rem;
+  border: 2px solid black;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2);
+}
+
+.thought-bubble::before {
+  content: '';
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: white;
+  border: 2px solid black;
+  border-radius: 50%;
+}
+
+.thought-bubble.bubble-left::before {
+  right: calc(100% + 5px);
+  top: 60%;
+}
+
+.thought-bubble.bubble-right::before {
+  left: calc(100% + 5px);
+  top: 60%;
+}
+
+.thought-bubble.bubble-top::before {
+  bottom: calc(100% + 5px);
+  left: 60%;
+}
+
+.thought-bubble.bubble-bottom::before {
+  top: calc(100% + 5px);
+  left: 60%;
+}
+
+/* Shout bubble */
+.shout-bubble {
+  position: relative;
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  border: 2px solid black;
+  transform: rotate(-2deg);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3);
+}
+
+.shout-bubble::before {
+  content: '';
+  position: absolute;
+  width: calc(100% + 10px);
+  height: calc(100% + 10px);
+  border: 2px dashed black;
+  border-radius: 0.5rem;
+  z-index: -1;
+  top: -5px;
+  left: -5px;
+}
+
+/* Whisper bubble */
+.whisper-bubble {
+  position: relative;
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  border: 2px dotted black;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  opacity: 0.9;
+}
+
+/* Comic panel styles */
+.comic-panel {
+  position: relative;
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.comic-panel-header {
+  margin: -1rem -1rem 1rem -1rem;
+  padding: 0.5rem 1rem;
+  font-family: 'Bangers', cursive;
+  font-size: 1.5rem;
+  background-color: #4A90E2;
+  color: white;
+  border-bottom: 2px solid black;
+}
+
+/* Comic buttons */
+.comic-button {
+  background-color: #FF6B6B;
+  color: white;
+  font-family: 'Comic Neue', cursive;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border: 2px solid black;
+  border-radius: 0.5rem;
+  box-shadow: 3px 3px 0px black;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.comic-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 5px 5px 0px black;
+}
+
+.comic-button:active {
+  transform: translateY(2px);
+  box-shadow: 1px 1px 0px black;
+}
+
+.comic-button-secondary {
+  background-color: #4A90E2;
+  color: white;
+  font-family: 'Comic Neue', cursive;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border: 2px solid black;
+  border-radius: 0.5rem;
+  box-shadow: 3px 3px 0px black;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.comic-button-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 5px 5px 0px black;
+}
+
+.comic-button-secondary:active {
+  transform: translateY(2px);
+  box-shadow: 1px 1px 0px black;
+}
+
+/* Sidebar icons */
+.sidebar-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  border: 2px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  background-color: white;
+}
+
+.sidebar-icon:hover {
+  transform: translateY(-2px);
+  box-shadow: 2px 2px 0px black;
+}
