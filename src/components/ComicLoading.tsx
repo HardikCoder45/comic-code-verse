@@ -10,20 +10,28 @@ interface ComicLoadingProps {
 const LoadingImages = [
   "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
   "https://images.unsplash.com/photo-1461749280684-dccba630e2f6",
-  "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158"
+  "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+  "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5",
+  "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7"
 ];
 
 const ComicLoading = ({ message = "Loading comic universe..." }: ComicLoadingProps) => {
   const [dots, setDots] = useState('');
   const [randomTip, setRandomTip] = useState('');
   const [currentImage, setCurrentImage] = useState(0);
+  const [showStoryPanel, setShowStoryPanel] = useState(false);
   
   const tips = [
     "Try typing 'comic' for a surprise!",
     "Click on icons to see their secrets!",
     "Every panel has a story. Explore them all!",
     "Some skills have hidden tooltips. Hover to discover!",
-    "The avatar might have something to tell you!"
+    "The avatar might have something to tell you!",
+    "Double-click on project cards to see a special animation!",
+    "Try finding the hidden easter eggs in the navigation bar!",
+    "The chatbot has special responses to certain keywords...",
+    "Some panels can be dragged around for a different perspective!",
+    "There's a secret game hidden somewhere in the projects page..."
   ];
   
   useEffect(() => {
@@ -43,14 +51,20 @@ const ComicLoading = ({ message = "Loading comic universe..." }: ComicLoadingPro
       setCurrentImage(prev => (prev + 1) % LoadingImages.length);
     }, 3000);
     
+    // Show story panel after delay
+    const storyTimer = setTimeout(() => {
+      setShowStoryPanel(true);
+    }, 2000);
+    
     return () => {
       clearInterval(interval);
       clearInterval(imageInterval);
+      clearTimeout(storyTimer);
     };
   }, []);
   
   return (
-    <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-gradient-to-b from-white/90 to-comic-background/90 backdrop-blur-sm z-50 flex items-center justify-center">
       <div className="max-w-md relative">
         <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 w-32 h-32 rounded-full border-4 border-comic-border overflow-hidden">
           <motion.div 
@@ -88,7 +102,13 @@ const ComicLoading = ({ message = "Loading comic universe..." }: ComicLoadingPro
             ></motion.div>
             
             <div className="absolute inset-4 bg-white rounded-full flex items-center justify-center">
-              <span className="font-bangers text-2xl text-comic-blue">POW!</span>
+              <motion.span 
+                className="font-bangers text-2xl text-comic-blue"
+                animate={{ scale: [1, 1.2, 1], color: ['#3B82F6', '#EC4899', '#3B82F6'] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                POW!
+              </motion.span>
             </div>
           </div>
         </div>
@@ -105,7 +125,7 @@ const ComicLoading = ({ message = "Loading comic universe..." }: ComicLoadingPro
         </motion.div>
         
         <div className="mt-8 flex justify-center space-x-2">
-          {[0, 1, 2].map((index) => (
+          {LoadingImages.map((_, index) => (
             <motion.div 
               key={index}
               animate={{ 
@@ -117,6 +137,45 @@ const ComicLoading = ({ message = "Loading comic universe..." }: ComicLoadingPro
             />
           ))}
         </div>
+        
+        {showStoryPanel && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8 border-2 border-comic-border rounded-lg bg-white p-4 shadow-lg"
+          >
+            <h3 className="font-bangers text-lg text-comic-purple mb-2">Comic Origin Story</h3>
+            <div className="flex items-center space-x-2 mb-2">
+              <div className="w-12 h-12 bg-comic-blue rounded-lg overflow-hidden border border-comic-border">
+                <motion.div 
+                  className="w-full h-full bg-center bg-cover"
+                  style={{ backgroundImage: `url(${LoadingImages[0]})` }}
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 4, repeat: Infinity }}
+                />
+              </div>
+              <div className="flex-1">
+                <div className="h-2 bg-gray-200 rounded-full w-3/4 mb-1">
+                  <motion.div 
+                    className="h-full bg-comic-orange rounded-full"
+                    initial={{ width: "0%" }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                </div>
+                <div className="h-2 bg-gray-200 rounded-full">
+                  <motion.div 
+                    className="h-full bg-comic-green rounded-full"
+                    initial={{ width: "0%" }}
+                    animate={{ width: "80%" }}
+                    transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
+                  />
+                </div>
+              </div>
+            </div>
+            <p className="font-comic text-sm text-gray-700">Assembling creative components and loading innovative features...</p>
+          </motion.div>
+        )}
       </div>
     </div>
   );

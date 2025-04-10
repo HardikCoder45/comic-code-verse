@@ -43,7 +43,7 @@ const ChatBot = () => {
     if (!message.trim()) return;
     
     // Add user message
-    const userMessage = { role: 'user', content: message };
+    const userMessage: Message = { role: 'user', content: message };
     setMessages(prev => [...prev, userMessage]);
     setMessage('');
     setIsLoading(true);
@@ -53,7 +53,7 @@ const ChatBot = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer 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'
+          'Authorization': 'Bearer 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'
         },
         body: JSON.stringify({
           model: "meta-llama/llama-4-scout-17b-16e-instruct",
@@ -71,7 +71,7 @@ const ChatBot = () => {
       const data = await response.json();
       
       if (data.choices && data.choices[0]?.message) {
-        const botResponse = { 
+        const botResponse: Message = { 
           role: 'assistant', 
           content: data.choices[0].message.content 
         };
