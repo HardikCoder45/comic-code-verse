@@ -60,13 +60,43 @@ const ComicBookPage = ({
     };
     
     flipProgress.set(hasFlipped ? 1 : 0);
-    flipProgress.animate(targetValue, animation).then(() => {
-      setHasFlipped(!hasFlipped);
-      setIsFlipping(false);
-      if (onPageTurn) {
-        onPageTurn(pageNumber);
+    
+    // Use framer-motion to animate properly
+    const controls = {
+      start: () => {
+        const startValue = hasFlipped ? 1 : 0;
+        const endValue = hasFlipped ? 0 : 1;
+        
+        // Create a simple animation function
+        const startTime = Date.now();
+        const updateValue = () => {
+          const elapsed = Date.now() - startTime;
+          const duration = flipDuration * 1000;
+          const progress = Math.min(elapsed / duration, 1);
+          
+          // Simple easing function
+          const easedProgress = 0.5 - 0.5 * Math.cos(progress * Math.PI);
+          const newValue = startValue + (endValue - startValue) * easedProgress;
+          
+          flipProgress.set(newValue);
+          
+          if (progress < 1) {
+            requestAnimationFrame(updateValue);
+          } else {
+            setHasFlipped(!hasFlipped);
+            setIsFlipping(false);
+            if (onPageTurn) {
+              onPageTurn(pageNumber);
+            }
+          }
+        };
+        
+        requestAnimationFrame(updateValue);
+        return flipProgress;
       }
-    });
+    };
+    
+    controls.start();
   };
   
   return (

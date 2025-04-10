@@ -84,13 +84,13 @@ const ComicLoading = ({ message = "Loading comic universe..." }: ComicLoadingPro
         
         <SpeechBubble type="speech" color="blue" animated>
           <motion.p 
-            className="font-comic text-xl mb-2"
+            className="font-comic text-xl mb-2 text-black"
             animate={{ opacity: [0.7, 1, 0.7] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
             {message}{dots}
           </motion.p>
-          <p className="font-comic text-sm">Our comic hero is assembling the panels...</p>
+          <p className="font-comic text-sm text-black">Our comic hero is assembling the panels...</p>
         </SpeechBubble>
         
         <div className="mt-8 flex justify-center">
@@ -120,7 +120,7 @@ const ComicLoading = ({ message = "Loading comic universe..." }: ComicLoadingPro
           className="mt-6 text-center"
         >
           <SpeechBubble type="thought" color="pink" position="top" className="inline-block">
-            <p className="font-comic text-sm">💡 Tip: {randomTip}</p>
+            <p className="font-comic text-sm text-black">💡 Tip: {randomTip}</p>
           </SpeechBubble>
         </motion.div>
         
@@ -173,7 +173,7 @@ const ComicLoading = ({ message = "Loading comic universe..." }: ComicLoadingPro
                 </div>
               </div>
             </div>
-            <p className="font-comic text-sm text-gray-700">Assembling creative components and loading innovative features...</p>
+            <p className="font-comic text-sm text-black">Assembling creative components and loading innovative features...</p>
           </motion.div>
         )}
       </div>

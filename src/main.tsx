@@ -16,14 +16,14 @@ const consoleStyles = {
   text: 'font-size: 12px; color: #f97316;',
 };
 
-// Performance metrics tracking
+// Performance metrics tracking with type-safe approach
 const trackPerformance = () => {
   if (performance && 'getEntriesByType' in performance) {
     window.addEventListener('load', () => {
       setTimeout(() => {
         const perfEntries = performance.getEntriesByType('navigation');
         if (perfEntries.length > 0) {
-          const timing = perfEntries[0];
+          const timing = perfEntries[0] as PerformanceNavigationTiming;
           console.log('%cPerformance Metrics:', consoleStyles.subtitle);
           console.log(`%c• DOM Content Loaded: ${Math.round(timing.domContentLoadedEventEnd - timing.domContentLoadedEventStart)}ms`, consoleStyles.text);
           console.log(`%c• Page Load Time: ${Math.round(timing.loadEventEnd - timing.fetchStart)}ms`, consoleStyles.text);

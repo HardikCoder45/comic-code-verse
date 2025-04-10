@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import SpeechBubble from '../components/SpeechBubble';
 import Comic3DPanel from '../components/Comic3DPanel';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Code, Github, Zap, Star, Users, BookOpen, Award, Rocket, Coffee, Brain, Database, PanelLeft, PanelRight, MessageSquare, Heart } from 'lucide-react';
+import { ArrowRight, Code, Github, Zap, Star, Users, BookOpen, Award, Rocket, Coffee, Brain, Database, PanelLeft, PanelRight, MessageSquare, Heart, Trophy } from 'lucide-react';
 import SkillBadge from '../components/SkillBadge';
 import { projects } from '../data/projects';
 
@@ -182,7 +182,7 @@ const Landing = () => {
           {/* Main title with layered 3D effect */}
           <div className="relative">
             <motion.h1 
-              className="font-bangers text-6xl md:text-8xl mb-6 leading-tight relative z-10"
+              className="font-bangers text-6xl md:text-8xl mb-6 leading-tight relative z-10 text-black"
               style={{ 
                 textShadow: "0 10px 30px rgba(0,0,0,0.2)",
                 WebkitTextStroke: "2px rgba(0,0,0,0.1)" 
@@ -241,7 +241,7 @@ const Landing = () => {
             transition={{ delay: 1.4, duration: 0.8 }}
           >
             <SpeechBubble type="shout" position="bottom" color="yellow" animated>
-              <p className="font-comic text-xl">Welcome to the Comic Code Verse - where coding meets storytelling and every project is a panel in your developer journey!</p>
+              <p className="font-comic text-xl text-black">Welcome to the Comic Code Verse - where coding meets storytelling and every project is a panel in your developer journey!</p>
             </SpeechBubble>
           </motion.div>
           
@@ -298,7 +298,7 @@ const Landing = () => {
               className="hover:scale-105 transition-transform duration-300"
               spotlightEffect={true}
             >
-              <p className="font-comic mb-6">Flip through projects like comic book pages with interactive animations and transitions.</p>
+              <p className="font-comic mb-6 text-black">Flip through projects like comic book pages with interactive animations and transitions.</p>
               <div className="mt-4 flex justify-center">
                 <div className="relative">
                   <Code className="text-comic-blue h-10 w-10 animate-pulse" />
@@ -314,7 +314,7 @@ const Landing = () => {
               className="hover:scale-105 transition-transform duration-300"
               spotlightEffect={true}
             >
-              <p className="font-comic mb-6">Display your programming skills with animated badges that bounce and float around your profile.</p>
+              <p className="font-comic mb-6 text-black">Display your programming skills with animated badges that bounce and float around your profile.</p>
               <div className="mt-4 flex justify-center">
                 <div className="relative">
                   <Zap className="text-comic-pink h-10 w-10 animate-pulse" />
@@ -330,7 +330,7 @@ const Landing = () => {
               className="hover:scale-105 transition-transform duration-300"
               spotlightEffect={true}
             >
-              <p className="font-comic mb-6">Run and test code snippets directly in the browser with embedded demos and playgrounds.</p>
+              <p className="font-comic mb-6 text-black">Run and test code snippets directly in the browser with embedded demos and playgrounds.</p>
               <div className="mt-4 flex justify-center">
                 <div className="relative">
                   <Github className="text-comic-green h-10 w-10 animate-pulse" />
@@ -354,7 +354,7 @@ const Landing = () => {
                 <Rocket className="text-comic-blue" />
               </div>
               <h3 className="font-bangers text-xl mb-2 text-comic-blue">Fast Performance</h3>
-              <p className="font-comic text-sm">Optimized code and assets for lightning-fast loading and smooth animations</p>
+              <p className="font-comic text-sm text-black">Optimized code and assets for lightning-fast loading and smooth animations</p>
             </motion.div>
 
             <motion.div 
@@ -369,7 +369,7 @@ const Landing = () => {
                 <PanelLeft className="text-comic-pink" />
               </div>
               <h3 className="font-bangers text-xl mb-2 text-comic-pink">Comic Layouts</h3>
-              <p className="font-comic text-sm">Unique comic-book style layouts that make your portfolio stand out</p>
+              <p className="font-comic text-sm text-black">Unique comic-book style layouts that make your portfolio stand out</p>
             </motion.div>
 
             <motion.div 
@@ -384,7 +384,7 @@ const Landing = () => {
                 <Brain className="text-comic-green" />
               </div>
               <h3 className="font-bangers text-xl mb-2 text-comic-green">AI Assistant</h3>
-              <p className="font-comic text-sm">Smart chatbot that helps visitors navigate your portfolio</p>
+              <p className="font-comic text-sm text-black">Smart chatbot that helps visitors navigate your portfolio</p>
             </motion.div>
 
             <motion.div 
@@ -399,7 +399,7 @@ const Landing = () => {
                 <Coffee className="text-comic-orange" />
               </div>
               <h3 className="font-bangers text-xl mb-2 text-comic-orange">Dark Mode</h3>
-              <p className="font-comic text-sm">Toggle between light and dark comic themes for comfortable viewing</p>
+              <p className="font-comic text-sm text-black">Toggle between light and dark comic themes for comfortable viewing</p>
             </motion.div>
           </div>
         </motion.div>
@@ -435,7 +435,7 @@ const Landing = () => {
                 <div className="md:w-1/2 md:pr-12 text-right">
                   <div className="bg-white p-6 rounded-xl border-2 border-comic-border shadow-lg">
                     <h3 className="font-bangers text-2xl text-comic-blue mb-2">Origin Story</h3>
-                    <p className="font-comic">It all began with HTML and CSS. Building simple websites and discovering the joy of creating things from scratch.</p>
+                    <p className="font-comic text-black">It all began with HTML and CSS. Building simple websites and discovering the joy of creating things from scratch.</p>
                     <div className="mt-4 flex flex-wrap gap-2 justify-end">
                       <SkillBadge name="HTML" color="orange" size="sm" />
                       <SkillBadge name="CSS" color="blue" size="sm" />
@@ -479,7 +479,7 @@ const Landing = () => {
                 <div className="md:w-1/2 md:pl-12">
                   <div className="bg-white p-6 rounded-xl border-2 border-comic-border shadow-lg">
                     <h3 className="font-bangers text-2xl text-comic-pink mb-2">Power-Up: JavaScript</h3>
-                    <p className="font-comic">Learning JavaScript transformed static pages into interactive applications. The adventure was getting exciting!</p>
+                    <p className="font-comic text-black">Learning JavaScript transformed static pages into interactive applications. The adventure was getting exciting!</p>
                     <div className="mt-4 flex flex-wrap gap-2">
                       <SkillBadge name="JavaScript" color="yellow" size="sm" />
                       <SkillBadge name="DOM" color="green" size="sm" />
@@ -499,7 +499,7 @@ const Landing = () => {
                 <div className="md:w-1/2 md:pr-12 text-right">
                   <div className="bg-white p-6 rounded-xl border-2 border-comic-border shadow-lg">
                     <h3 className="font-bangers text-2xl text-comic-green mb-2">Framework Frenzy</h3>
-                    <p className="font-comic">Diving into React and discovering the power of component-based architecture. Building faster and more efficiently!</p>
+                    <p className="font-comic text-black">Diving into React and discovering the power of component-based architecture. Building faster and more efficiently!</p>
                     <div className="mt-4 flex flex-wrap gap-2 justify-end">
                       <SkillBadge name="React" color="blue" size="sm" />
                       <SkillBadge name="Redux" color="purple" size="sm" />
@@ -543,11 +543,11 @@ const Landing = () => {
                 <div className="md:w-1/2 md:pl-12">
                   <div className="bg-white p-6 rounded-xl border-2 border-comic-border shadow-lg">
                     <h3 className="font-bangers text-2xl text-comic-orange mb-2">Backend Breakthrough</h3>
-                    <p className="font-comic">Mastering Node.js and databases. Now I could build full-stack applications from scratch!</p>
+                    <p className="font-comic text-black">Mastering Node.js and databases. Now I could build full-stack applications from scratch!</p>
                     <div className="mt-4 flex flex-wrap gap-2">
                       <SkillBadge name="Node.js" color="green" size="sm" />
                       <SkillBadge name="MongoDB" color="green" size="sm" />
-                      <SkillBadge name="Express" color="gray" size="sm" />
+                      <SkillBadge name="Express" color="blue" size="sm" />
                     </div>
                   </div>
                 </div>
@@ -564,11 +564,11 @@ const Landing = () => {
                 <div className="md:w-1/2 md:pr-12 text-right">
                   <div className="bg-white p-6 rounded-xl border-2 border-comic-border shadow-lg">
                     <h3 className="font-bangers text-2xl text-comic-purple mb-2">The Present: AI & Beyond</h3>
-                    <p className="font-comic">Exploring AI, machine learning, and creating innovative applications that push the boundaries of what's possible!</p>
+                    <p className="font-comic text-black">Exploring AI, machine learning, and creating innovative applications that push the boundaries of what's possible!</p>
                     <div className="mt-4 flex flex-wrap gap-2 justify-end">
                       <SkillBadge name="Python" color="blue" size="sm" />
                       <SkillBadge name="TensorFlow" color="orange" size="sm" />
-                      <SkillBadge name="Next.js" color="black" size="sm" />
+                      <SkillBadge name="Next.js" color="purple" size="sm" />
                     </div>
                   </div>
                 </div>
@@ -619,7 +619,7 @@ const Landing = () => {
             >
               <div className="relative h-full">
                 <div className="absolute top-2 right-2 bg-comic-yellow text-black font-bangers px-2 py-1 rounded-lg rotate-6 z-10">HOT!</div>
-                <p className="font-comic mb-4">A dynamic dashboard with real-time data visualization using React and D3.js</p>
+                <p className="font-comic mb-4 text-black">A dynamic dashboard with real-time data visualization using React and D3.js</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <SkillBadge name="React" color="blue" />
                   <SkillBadge name="D3.js" color="orange" />
@@ -628,15 +628,15 @@ const Landing = () => {
                 <div className="mt-6 space-y-4">
                   <div className="flex items-center">
                     <Users className="text-comic-blue mr-2" size={16} />
-                    <span className="font-comic text-sm">12,500+ Active Users</span>
+                    <span className="font-comic text-sm text-black">12,500+ Active Users</span>
                   </div>
                   <div className="flex items-center">
                     <Star className="text-comic-yellow mr-2" size={16} />
-                    <span className="font-comic text-sm">Featured Product of the Month</span>
+                    <span className="font-comic text-sm text-black">Featured Product of the Month</span>
                   </div>
                   <div className="flex items-center">
                     <Award className="text-comic-purple mr-2" size={16} />
-                    <span className="font-comic text-sm">Best Design Award 2023</span>
+                    <span className="font-comic text-sm text-black">Best Design Award 2023</span>
                   </div>
                 </div>
                 <div className="mt-6">
@@ -654,7 +654,7 @@ const Landing = () => {
             >
               <div className="relative h-full">
                 <div className="absolute top-2 right-2 bg-comic-green text-white font-bangers px-2 py-1 rounded-lg rotate-6 z-10">NEW!</div>
-                <p className="font-comic mb-4">A conversational AI interface with natural language processing capabilities</p>
+                <p className="font-comic mb-4 text-black">A conversational AI interface with natural language processing capabilities</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <SkillBadge name="Python" color="green" />
                   <SkillBadge name="TensorFlow" color="orange" />
@@ -663,15 +663,15 @@ const Landing = () => {
                 <div className="mt-6 space-y-4">
                   <div className="flex items-center">
                     <MessageSquare className="text-comic-green mr-2" size={16} />
-                    <span className="font-comic text-sm">500,000+ Messages Processed</span>
+                    <span className="font-comic text-sm text-black">500,000+ Messages Processed</span>
                   </div>
                   <div className="flex items-center">
                     <Database className="text-comic-blue mr-2" size={16} />
-                    <span className="font-comic text-sm">99.9% Uptime</span>
+                    <span className="font-comic text-sm text-black">99.9% Uptime</span>
                   </div>
                   <div className="flex items-center">
                     <Heart className="text-comic-pink mr-2" size={16} />
-                    <span className="font-comic text-sm">96% User Satisfaction</span>
+                    <span className="font-comic text-sm text-black">96% User Satisfaction</span>
                   </div>
                 </div>
                 <div className="mt-6">
@@ -689,24 +689,24 @@ const Landing = () => {
             >
               <div className="relative h-full">
                 <div className="absolute top-2 right-2 bg-comic-pink text-white font-bangers px-2 py-1 rounded-lg rotate-6 z-10">POPULAR!</div>
-                <p className="font-comic mb-4">A full-featured online store with payment processing and inventory management</p>
+                <p className="font-comic mb-4 text-black">A full-featured online store with payment processing and inventory management</p>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <SkillBadge name="Next.js" color="black" />
+                  <SkillBadge name="Next.js" color="purple" />
                   <SkillBadge name="Stripe" color="purple" />
                   <SkillBadge name="PostgreSQL" color="blue" />
                 </div>
                 <div className="mt-6 space-y-4">
                   <div className="flex items-center">
                     <BookOpen className="text-comic-purple mr-2" size={16} />
-                    <span className="font-comic text-sm">Case Study Published</span>
+                    <span className="font-comic text-sm text-black">Case Study Published</span>
                   </div>
                   <div className="flex items-center">
                     <Rocket className="text-comic-orange mr-2" size={16} />
-                    <span className="font-comic text-sm">200% Growth in 6 Months</span>
+                    <span className="font-comic text-sm text-black">200% Growth in 6 Months</span>
                   </div>
                   <div className="flex items-center">
                     <Star className="text-comic-yellow mr-2" size={16} />
-                    <span className="font-comic text-sm">4.9/5 Client Rating</span>
+                    <span className="font-comic text-sm text-black">4.9/5 Client Rating</span>
                   </div>
                 </div>
                 <div className="mt-6">
@@ -724,7 +724,7 @@ const Landing = () => {
             >
               <div className="relative h-full">
                 <div className="absolute top-2 right-2 bg-comic-orange text-white font-bangers px-2 py-1 rounded-lg rotate-6 z-10">FEATURED!</div>
-                <p className="font-comic mb-4">A cross-platform mobile app for fitness tracking with social features</p>
+                <p className="font-comic mb-4 text-black">A cross-platform mobile app for fitness tracking with social features</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <SkillBadge name="React Native" color="blue" />
                   <SkillBadge name="Firebase" color="orange" />
@@ -733,15 +733,15 @@ const Landing = () => {
                 <div className="mt-6 space-y-4">
                   <div className="flex items-center">
                     <Users className="text-comic-green mr-2" size={16} />
-                    <span className="font-comic text-sm">50,000+ Downloads</span>
+                    <span className="font-comic text-sm text-black">50,000+ Downloads</span>
                   </div>
                   <div className="flex items-center">
                     <Star className="text-comic-yellow mr-2" size={16} />
-                    <span className="font-comic text-sm">4.8 App Store Rating</span>
+                    <span className="font-comic text-sm text-black">4.8 App Store Rating</span>
                   </div>
                   <div className="flex items-center">
                     <Trophy className="text-comic-orange mr-2" size={16} />
-                    <span className="font-comic text-sm">Featured in App Store</span>
+                    <span className="font-comic text-sm text-black">Featured in App Store</span>
                   </div>
                 </div>
                 <div className="mt-6">
@@ -753,7 +753,7 @@ const Landing = () => {
           
           <div className="mt-12 text-center">
             <SpeechBubble type="thought" color="purple" animated>
-              <p className="font-comic">And many more exciting projects waiting for you to discover!</p>
+              <p className="font-comic text-black">And many more exciting projects waiting for you to discover!</p>
             </SpeechBubble>
           </div>
           
@@ -792,8 +792,8 @@ const Landing = () => {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-comic font-bold">React & Next.js</span>
-                      <span className="font-comic text-sm">95%</span>
+                      <span className="font-comic font-bold text-black">React & Next.js</span>
+                      <span className="font-comic text-sm text-black">95%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div className="bg-comic-blue h-2.5 rounded-full" style={{ width: '95%' }}></div>
@@ -802,8 +802,8 @@ const Landing = () => {
                   
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-comic font-bold">HTML5 & CSS3</span>
-                      <span className="font-comic text-sm">90%</span>
+                      <span className="font-comic font-bold text-black">HTML5 & CSS3</span>
+                      <span className="font-comic text-sm text-black">90%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div className="bg-comic-orange h-2.5 rounded-full" style={{ width: '90%' }}></div>
@@ -812,8 +812,8 @@ const Landing = () => {
                   
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-comic font-bold">JavaScript/TypeScript</span>
-                      <span className="font-comic text-sm">92%</span>
+                      <span className="font-comic font-bold text-black">JavaScript/TypeScript</span>
+                      <span className="font-comic text-sm text-black">92%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div className="bg-comic-yellow h-2.5 rounded-full" style={{ width: '92%' }}></div>
@@ -822,8 +822,8 @@ const Landing = () => {
                   
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-comic font-bold">State Management</span>
-                      <span className="font-comic text-sm">88%</span>
+                      <span className="font-comic font-bold text-black">State Management</span>
+                      <span className="font-comic text-sm text-black">88%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div className="bg-comic-purple h-2.5 rounded-full" style={{ width: '88%' }}></div>
@@ -832,8 +832,8 @@ const Landing = () => {
                   
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-comic font-bold">Responsive Design</span>
-                      <span className="font-comic text-sm">94%</span>
+                      <span className="font-comic font-bold text-black">Responsive Design</span>
+                      <span className="font-comic text-sm text-black">94%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div className="bg-comic-pink h-2.5 rounded-full" style={{ width: '94%' }}></div>
@@ -853,8 +853,8 @@ const Landing = () => {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-comic font-bold">Node.js</span>
-                      <span className="font-comic text-sm">90%</span>
+                      <span className="font-comic font-bold text-black">Node.js</span>
+                      <span className="font-comic text-sm text-black">90%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div className="bg-comic-green h-2.5 rounded-full" style={{ width: '90%' }}></div>
@@ -863,8 +863,8 @@ const Landing = () => {
                   
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-comic font-bold">Python</span>
-                      <span className="font-comic text-sm">85%</span>
+                      <span className="font-comic font-bold text-black">Python</span>
+                      <span className="font-comic text-sm text-black">85%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div className="bg-comic-blue h-2.5 rounded-full" style={{ width: '85%' }}></div>
@@ -873,8 +873,8 @@ const Landing = () => {
                   
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-comic font-bold">API Development</span>
-                      <span className="font-comic text-sm">92%</span>
+                      <span className="font-comic font-bold text-black">API Development</span>
+                      <span className="font-comic text-sm text-black">92%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div className="bg-comic-orange h-2.5 rounded-full" style={{ width: '92%' }}></div>
@@ -883,8 +883,8 @@ const Landing = () => {
                   
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-comic font-bold">Databases</span>
-                      <span className="font-comic text-sm">87%</span>
+                      <span className="font-comic font-bold text-black">Databases</span>
+                      <span className="font-comic text-sm text-black">87%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div className="bg-comic-yellow h-2.5 rounded-full" style={{ width: '87%' }}></div>
@@ -893,8 +893,8 @@ const Landing = () => {
                   
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-comic font-bold">Authentication</span>
-                      <span className="font-comic text-sm">89%</span>
+                      <span className="font-comic font-bold text-black">Authentication</span>
+                      <span className="font-comic text-sm text-black">89%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div className="bg-comic-purple h-2.5 rounded-full" style={{ width: '89%' }}></div>
@@ -914,8 +914,8 @@ const Landing = () => {
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-comic font-bold">UI/UX Design</span>
-                      <span className="font-comic text-sm">88%</span>
+                      <span className="font-comic font-bold text-black">UI/UX Design</span>
+                      <span className="font-comic text-sm text-black">88%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div className="bg-comic-pink h-2.5 rounded-full" style={{ width: '88%' }}></div>
@@ -924,8 +924,8 @@ const Landing = () => {
                   
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-comic font-bold">DevOps/CI/CD</span>
-                      <span className="font-comic text-sm">82%</span>
+                      <span className="font-comic font-bold text-black">DevOps/CI/CD</span>
+                      <span className="font-comic text-sm text-black">82%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div className="bg-comic-blue h-2.5 rounded-full" style={{ width: '82%' }}></div>
@@ -934,8 +934,8 @@ const Landing = () => {
                   
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-comic font-bold">Machine Learning</span>
-                      <span className="font-comic text-sm">80%</span>
+                      <span className="font-comic font-bold text-black">Machine Learning</span>
+                      <span className="font-comic text-sm text-black">80%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div className="bg-comic-orange h-2.5 rounded-full" style={{ width: '80%' }}></div>
@@ -944,8 +944,8 @@ const Landing = () => {
                   
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-comic font-bold">Mobile Development</span>
-                      <span className="font-comic text-sm">85%</span>
+                      <span className="font-comic font-bold text-black">Mobile Development</span>
+                      <span className="font-comic text-sm text-black">85%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div className="bg-comic-green h-2.5 rounded-full" style={{ width: '85%' }}></div>
@@ -954,8 +954,8 @@ const Landing = () => {
                   
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="font-comic font-bold">Project Management</span>
-                      <span className="font-comic text-sm">86%</span>
+                      <span className="font-comic font-bold text-black">Project Management</span>
+                      <span className="font-comic text-sm text-black">86%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2.5">
                       <div className="bg-comic-purple h-2.5 rounded-full" style={{ width: '86%' }}></div>
@@ -986,7 +986,7 @@ const Landing = () => {
           <div className="flex flex-col md:flex-row gap-6 items-center">
             <div className="flex-1">
               <SpeechBubble color="green">
-                <p className="font-comic">Jump into the Comic Code Verse and explore an interactive portfolio experience unlike any other!</p>
+                <p className="font-comic text-black">Jump into the Comic Code Verse and explore an interactive portfolio experience unlike any other!</p>
               </SpeechBubble>
             </div>
             
