@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import ComicPanel from '../components/ComicPanel';
 import Comic3DPanel from '../components/Comic3DPanel';
@@ -13,11 +12,10 @@ import {
   Code, ExternalLink, Github, Search, Filter, SortDesc, 
   Zap, BookOpen, Star, Calendar, Eye, Award, Bolt,
   RotateCw, Layers, Box, Cpu, Palette, Rocket, Trophy,
-  Smartphone
+  Smartphone, X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Animation variants
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
@@ -35,12 +33,10 @@ const Projects = () => {
   const [showFeaturedProject, setShowFeaturedProject] = useState(false);
   const [featuredProjectId, setFeaturedProjectId] = useState(1);
   
-  // Get all unique categories from projects
   const categories = ['all', ...new Set(projects.flatMap(p => 
     p.skills.map(s => s.name.toLowerCase())
   ))];
   
-  // Filter and sort projects
   const filteredProjects = projects.filter(project => {
     if (filter === 'all') return true;
     return project.skills.some(skill => 
@@ -77,7 +73,6 @@ const Projects = () => {
     setShowFeaturedProject(true);
   };
   
-  // Stats for the projects
   const projectStats = {
     total: projects.length,
     frontend: projects.filter(p => p.skills.some(s => ['React', 'Vue.js', 'HTML', 'CSS', 'JavaScript'].includes(s.name))).length,
@@ -106,7 +101,6 @@ const Projects = () => {
             </SpeechBubble>
           </div>
           
-          {/* Project Stats */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 my-6">
             <motion.div 
               className="bg-white rounded-lg border-2 border-comic-border p-3 text-center"
@@ -164,7 +158,6 @@ const Projects = () => {
             </motion.div>
           </div>
           
-          {/* Controls */}
           <div className="flex flex-col md:flex-row gap-3 justify-between items-center mb-6 bg-white p-4 rounded-lg border-2 border-comic-border">
             <div className="flex flex-1 gap-2 items-center">
               <div className="relative flex-1">
@@ -250,7 +243,6 @@ const Projects = () => {
             </div>
           </div>
           
-          {/* Project count and stats */}
           <div className="flex justify-between items-center mb-6 bg-white p-3 rounded-lg border-2 border-comic-border">
             <p className="font-comic">
               Showing <span className="font-bold">{sortedProjects.length}</span> out of <span className="font-bold">{projects.length}</span> projects
@@ -269,7 +261,6 @@ const Projects = () => {
           </div>
         </motion.div>
         
-        {/* Featured Project */}
         <AnimatePresence>
           {showFeaturedProject && (
             <motion.div
@@ -376,210 +367,205 @@ const Projects = () => {
           )}
         </AnimatePresence>
         
-        {/* Project display - Grid, Carousel, or Book */}
-        {currentView === 'grid' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {sortedProjects.map((project, index) => (
-              <motion.div 
-                key={project.id}
-                variants={fadeInUp}
-                initial="initial"
-                animate="animate"
-                transition={{ delay: index * 0.05 }}
-                onMouseEnter={() => setHoveredProject(project.id)}
-                onMouseLeave={() => setHoveredProject(null)}
-                className="relative"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {sortedProjects.map((project, index) => (
+            <motion.div 
+              key={project.id}
+              variants={fadeInUp}
+              initial="initial"
+              animate="animate"
+              transition={{ delay: index * 0.05 }}
+              onMouseEnter={() => setHoveredProject(project.id)}
+              onMouseLeave={() => setHoveredProject(null)}
+              className="relative"
+            >
+              <Comic3DPanel 
+                title={project.title}
+                headerColor={project.skills[0]?.color || 'blue'}
+                spotlightEffect={true}
+                backgroundImage={project.image}
+                className="h-full"
               >
+                <div className="flex flex-col justify-between h-full">
+                  <div>
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="bg-comic-orange text-white text-xs font-bold px-2 py-1 rounded-full">#{project.id}</span>
+                        <span className="flex items-center gap-1 text-xs">
+                          <Eye size={14} /> {1200 + project.id * 100}
+                        </span>
+                      </div>
+                      <span className="bg-comic-green text-white text-xs font-bold px-2 py-1 rounded-full">
+                        {new Date().getFullYear() - Math.floor(Math.random() * 3)}
+                      </span>
+                    </div>
+                    
+                    <p className="font-comic mb-4 line-clamp-2">{project.description}</p>
+                    
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {project.skills.map((skill, idx) => (
+                        <SkillBadge 
+                          key={idx} 
+                          name={skill.name} 
+                          color={skill.color}
+                          size="sm"
+                          icon={<Code size={12} />}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="flex space-x-2 mt-4">
+                    <button 
+                      className="flex-1 comic-button-secondary text-xs py-1"
+                      onClick={() => handleShowFeaturedProject(project.id)}
+                    >
+                      <Box className="mr-1" size={14} /> View Details
+                    </button>
+                    {project.repoUrl && (
+                      <a 
+                        href={project.repoUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="comic-button text-xs py-1 flex-1 flex items-center justify-center"
+                      >
+                        <Github size={14} className="mr-1" /> Code
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </Comic3DPanel>
+              
+              {hoveredProject === project.id && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  className="absolute -top-2 -right-2 bg-comic-yellow text-black font-bangers px-2 py-1 rounded-lg rotate-12 z-20"
+                >
+                  {index < 2 ? 'HOT!' : index < 4 ? 'NEW!' : 'COOL!'}
+                </motion.div>
+              )}
+            </motion.div>
+          ))}
+        </div>
+        
+        <Carousel className="w-full">
+          <CarouselContent>
+            {sortedProjects.map((project) => (
+              <CarouselItem key={project.id} className="md:basis-1/2 lg:basis-1/3">
                 <Comic3DPanel 
                   title={project.title}
                   headerColor={project.skills[0]?.color || 'blue'}
-                  spotlightEffect={true}
                   backgroundImage={project.image}
-                  className="h-full"
                 >
                   <div className="flex flex-col justify-between h-full">
                     <div>
-                      <div className="flex justify-between items-start mb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="bg-comic-orange text-white text-xs font-bold px-2 py-1 rounded-full">#{project.id}</span>
-                          <span className="flex items-center gap-1 text-xs">
-                            <Eye size={14} /> {1200 + project.id * 100}
-                          </span>
-                        </div>
-                        <span className="bg-comic-green text-white text-xs font-bold px-2 py-1 rounded-full">
-                          {new Date().getFullYear() - Math.floor(Math.random() * 3)}
-                        </span>
-                      </div>
-                      
-                      <p className="font-comic mb-4 line-clamp-2">{project.description}</p>
-                      
-                      <div className="flex flex-wrap gap-1 mt-2">
+                      <p className="font-comic mb-4 line-clamp-3">{project.description}</p>
+                      <div className="flex flex-wrap gap-1">
                         {project.skills.map((skill, idx) => (
                           <SkillBadge 
                             key={idx} 
                             name={skill.name} 
-                            color={skill.color}
+                            color={skill.color} 
                             size="sm"
-                            icon={<Code size={12} />}
                           />
                         ))}
                       </div>
                     </div>
-                    
-                    <div className="flex space-x-2 mt-4">
-                      <button 
-                        className="flex-1 comic-button-secondary text-xs py-1"
-                        onClick={() => handleShowFeaturedProject(project.id)}
-                      >
-                        <Box className="mr-1" size={14} /> View Details
-                      </button>
-                      {project.repoUrl && (
-                        <a 
-                          href={project.repoUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="comic-button text-xs py-1 flex-1 flex items-center justify-center"
-                        >
-                          <Github size={14} className="mr-1" /> Code
-                        </a>
-                      )}
-                    </div>
+                    <button 
+                      className="comic-button-secondary mt-4 text-sm"
+                      onClick={() => handleShowFeaturedProject(project.id)}
+                    >
+                      See Details
+                    </button>
                   </div>
                 </Comic3DPanel>
-                
-                {hoveredProject === project.id && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    className="absolute -top-2 -right-2 bg-comic-yellow text-black font-bangers px-2 py-1 rounded-lg rotate-12 z-20"
-                  >
-                    {index < 2 ? 'HOT!' : index < 4 ? 'NEW!' : 'COOL!'}
-                  </motion.div>
-                )}
-              </motion.div>
+              </CarouselItem>
             ))}
+          </CarouselContent>
+          <CarouselPrevious className="left-1" />
+          <CarouselNext className="right-1" />
+        </Carousel>
+        
+        <div className="relative w-full bg-comic-background border-4 border-comic-border rounded-xl overflow-hidden" style={{ height: '600px' }}>
+          <div className="absolute top-0 left-0 w-full p-3 bg-comic-blue text-white font-bangers text-center">
+            Comic Book View - {currentBookPage + 1}/{Math.ceil(sortedProjects.length / 2)}
           </div>
-        ) : currentView === 'carousel' ? (
-          <Carousel className="w-full">
-            <CarouselContent>
-              {sortedProjects.map((project) => (
-                <CarouselItem key={project.id} className="md:basis-1/2 lg:basis-1/3">
-                  <Comic3DPanel 
-                    title={project.title}
-                    headerColor={project.skills[0]?.color || 'blue'}
-                    backgroundImage={project.image}
-                  >
-                    <div className="flex flex-col justify-between h-full">
-                      <div>
-                        <p className="font-comic mb-4 line-clamp-3">{project.description}</p>
-                        <div className="flex flex-wrap gap-1">
-                          {project.skills.map((skill, idx) => (
-                            <SkillBadge 
-                              key={idx} 
-                              name={skill.name} 
-                              color={skill.color} 
-                              size="sm"
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      <button 
-                        className="comic-button-secondary mt-4 text-sm"
-                        onClick={() => handleShowFeaturedProject(project.id)}
-                      >
-                        See Details
-                      </button>
-                    </div>
-                  </Comic3DPanel>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="left-1" />
-            <CarouselNext className="right-1" />
-          </Carousel>
-        ) : (
-          <div className="relative w-full bg-comic-background border-4 border-comic-border rounded-xl overflow-hidden" style={{ height: '600px' }}>
-            <div className="absolute top-0 left-0 w-full p-3 bg-comic-blue text-white font-bangers text-center">
-              Comic Book View - {currentBookPage + 1}/{Math.ceil(sortedProjects.length / 2)}
-            </div>
-            
-            <div className="absolute top-12 left-0 w-full h-[calc(100%-48px)] bg-white">
-              {sortedProjects.map((project, index) => {
-                // Only show two projects per page (one on each side)
-                const pageIdx = Math.floor(index / 2);
-                const isLeftPage = index % 2 === 0;
-                
-                if (pageIdx === currentBookPage) {
-                  return (
-                    <div key={project.id} className={`absolute ${isLeftPage ? 'left-0' : 'right-0'} top-0 w-1/2 h-full p-6`}>
-                      <h3 className="font-bangers text-2xl text-comic-blue mb-4">{project.title}</h3>
-                      
-                      {project.image && (
-                        <div className="h-40 mb-4 rounded-lg overflow-hidden border-2 border-comic-border">
-                          <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
-                        </div>
-                      )}
-                      
-                      <p className="font-comic mb-4">{project.description}</p>
-                      
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {project.skills.map((skill, idx) => (
-                          <SkillBadge 
-                            key={idx} 
-                            name={skill.name} 
-                            color={skill.color}
-                            size="sm"
-                          />
-                        ))}
-                      </div>
-                      
-                      <button 
-                        className="comic-button-secondary w-full text-sm"
-                        onClick={() => handleShowFeaturedProject(project.id)}
-                      >
-                        View Details
-                      </button>
-                    </div>
-                  );
-                }
-                return null;
-              })}
-            </div>
-            
-            <div className="absolute bottom-0 left-0 w-full p-3 bg-gray-100 border-t-2 border-comic-border flex justify-between items-center">
-              <button 
-                className="comic-button-secondary"
-                disabled={currentBookPage === 0}
-                onClick={() => setCurrentBookPage(prev => Math.max(0, prev - 1))}
-              >
-                Previous Page
-              </button>
-              
-              <div className="flex space-x-2">
-                {Array.from({ length: Math.ceil(sortedProjects.length / 2) }).map((_, idx) => (
-                  <button 
-                    key={idx}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${currentBookPage === idx ? 'bg-comic-blue text-white' : 'bg-white border-2 border-comic-border'}`}
-                    onClick={() => setCurrentBookPage(idx)}
-                  >
-                    {idx + 1}
-                  </button>
-                ))}
-              </div>
-              
-              <button 
-                className="comic-button"
-                disabled={currentBookPage === Math.ceil(sortedProjects.length / 2) - 1}
-                onClick={() => setCurrentBookPage(prev => Math.min(Math.ceil(sortedProjects.length / 2) - 1, prev + 1))}
-              >
-                Next Page
-              </button>
-            </div>
-          </div>
-        )}
           
-        {/* Project Categories Tabs */}
+          <div className="absolute top-12 left-0 w-full h-[calc(100%-48px)] bg-white">
+            {sortedProjects.map((project, index) => {
+              const pageIdx = Math.floor(index / 2);
+              const isLeftPage = index % 2 === 0;
+              
+              if (pageIdx === currentBookPage) {
+                return (
+                  <div key={project.id} className={`absolute ${isLeftPage ? 'left-0' : 'right-0'} top-0 w-1/2 h-full p-6`}>
+                    <h3 className="font-bangers text-2xl text-comic-blue mb-4">{project.title}</h3>
+                    
+                    {project.image && (
+                      <div className="h-40 mb-4 rounded-lg overflow-hidden border-2 border-comic-border">
+                        <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    
+                    <p className="font-comic mb-4">{project.description}</p>
+                    
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {project.skills.map((skill, idx) => (
+                        <SkillBadge 
+                          key={idx} 
+                          name={skill.name} 
+                          color={skill.color}
+                          size="sm"
+                        />
+                      ))}
+                    </div>
+                    
+                    <button 
+                      className="comic-button-secondary w-full text-sm"
+                      onClick={() => handleShowFeaturedProject(project.id)}
+                    >
+                      View Details
+                    </button>
+                  </div>
+                );
+              }
+              return null;
+            })}
+          </div>
+          
+          <div className="absolute bottom-0 left-0 w-full p-3 bg-gray-100 border-t-2 border-comic-border flex justify-between items-center">
+            <button 
+              className="comic-button-secondary"
+              disabled={currentBookPage === 0}
+              onClick={() => setCurrentBookPage(prev => Math.max(0, prev - 1))}
+            >
+              Previous Page
+            </button>
+            
+            <div className="flex space-x-2">
+              {Array.from({ length: Math.ceil(sortedProjects.length / 2) }).map((_, idx) => (
+                <button 
+                  key={idx}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${currentBookPage === idx ? 'bg-comic-blue text-white' : 'bg-white border-2 border-comic-border'}`}
+                  onClick={() => setCurrentBookPage(idx)}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+            </div>
+            
+            <button 
+              className="comic-button"
+              disabled={currentBookPage === Math.ceil(sortedProjects.length / 2) - 1}
+              onClick={() => setCurrentBookPage(prev => Math.min(Math.ceil(sortedProjects.length / 2) - 1, prev + 1))}
+            >
+              Next Page
+            </button>
+          </div>
+        </div>
+        
         <div className="mt-12 bg-white p-6 rounded-xl border-4 border-comic-border">
           <h2 className="font-bangers text-3xl text-comic-blue mb-4">Project Categories</h2>
           <Tabs defaultValue="all">
@@ -805,8 +791,7 @@ const Projects = () => {
             </TabsContent>
           </Tabs>
         </div>
-          
-        {/* Call to Action */}
+        
         <div className="mt-12 bg-gradient-to-r from-comic-blue to-comic-purple rounded-xl p-6 text-white shadow-lg shadow-purple-300/30">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div>
