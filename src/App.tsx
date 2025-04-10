@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Suspense, lazy, useState, useEffect } from "react";
+import { Suspense, lazy } from "react";
 
 // Components
 import ComicSidebar from "./components/ComicSidebar";
@@ -25,8 +25,6 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [showEasterEgg, setShowEasterEgg] = useState(false);
-  
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -38,7 +36,7 @@ const App = () => {
             <Route path="*" element={
               <div className="min-h-screen w-full flex relative">
                 <ComicSidebar />
-                <Suspense fallback={<ComicLoading message="Loading awesome comic panels..." />}>
+                <Suspense fallback={<ComicLoading message="Loading..." />}>
                   <main className="flex-1">
                     <Routes>
                       <Route path="/home" element={<Home />} />

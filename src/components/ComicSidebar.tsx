@@ -34,7 +34,7 @@ const ComicSidebar = () => {
               <item.icon size={24} />
               <div className="absolute left-16 scale-0 group-hover:scale-100 transition-all duration-300 origin-left">
                 <div className="speech-bubble whitespace-nowrap">
-                  <span className="font-comic font-bold">{item.label}</span>
+                  <span className="font-comic font-bold text-black">{item.label}</span>
                 </div>
               </div>
             </Link>
