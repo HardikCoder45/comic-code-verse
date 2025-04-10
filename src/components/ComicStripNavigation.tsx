@@ -10,7 +10,7 @@ const ComicStripNavigation = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   
   const navItems = [
-    { path: '/', label: 'Home', icon: Home, color: 'bg-comic-blue' },
+    { path: '/home', label: 'Home', icon: Home, color: 'bg-comic-blue' },
     { path: '/projects', label: 'Projects', icon: BookOpen, color: 'bg-comic-pink' },
     { path: '/about', label: 'About', icon: User, color: 'bg-comic-orange' },
     { path: '/skills', label: 'Skills', icon: Image, color: 'bg-comic-green' },

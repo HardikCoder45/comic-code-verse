@@ -7,7 +7,7 @@ const ComicSidebar = () => {
   const location = useLocation();
   
   const navItems = [
-    { icon: Home, path: '/', label: 'Home' },
+    { icon: Home, path: '/home', label: 'Home' },
     { icon: BookOpen, path: '/projects', label: 'Projects' },
     { icon: User, path: '/about', label: 'About' },
     { icon: Image, path: '/skills', label: 'Skills' },
@@ -16,11 +16,11 @@ const ComicSidebar = () => {
 
   return (
     <div className="fixed left-0 top-0 h-full w-20 bg-white border-r-4 border-comic-border flex flex-col items-center p-4 z-10">
-      <div className="mb-8 mt-4">
-        <div className="w-12 h-12 bg-comic-blue rounded-full flex items-center justify-center border-2 border-black">
-          <span className="font-bangers text-white text-xl">CC</span>
+      <Link to="/" className="mb-8 mt-4">
+        <div className="w-12 h-12 bg-comic-blue rounded-full flex items-center justify-center border-2 border-black hover:scale-110 transition-transform duration-300">
+          <span className="font-bangers text-white text-xl">HA</span>
         </div>
-      </div>
+      </Link>
       
       <div className="flex flex-col space-y-6">
         {navItems.map((item) => {

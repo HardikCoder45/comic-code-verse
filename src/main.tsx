@@ -81,37 +81,16 @@ if (isMobile) {
 // Mount the application
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Suspense fallback={<ComicLoading message="Assembling the Comic Code Verse..." />}>
+    <Suspense fallback={<ComicLoading message="Assembling the panels..." />}>
       <LazyApp />
     </Suspense>
   </StrictMode>
 );
 
-// Easter egg: Konami code detector
-let konamiCodePosition = 0;
-const konamiCode = [
-  'ArrowUp', 'ArrowUp', 
-  'ArrowDown', 'ArrowDown', 
-  'ArrowLeft', 'ArrowRight', 
-  'ArrowLeft', 'ArrowRight', 
-  'b', 'a'
-];
-
+// Keyboard shortcut handling
 document.addEventListener('keydown', (e) => {
   // Handle "?" key press for help
   if (e.key === '?') {
-    alert('Keyboard Shortcuts:\n\n• ? - Show this help\n• Home - Go to homepage\n• End - Go to contact page\n• 1-5 - Navigate to different sections\n• Konami code - Try it to find out!');
-  }
-  
-  // Konami code detection
-  if (e.key === konamiCode[konamiCodePosition]) {
-    konamiCodePosition++;
-    if (konamiCodePosition === konamiCode.length) {
-      document.body.classList.add('konami-activated');
-      konamiCodePosition = 0;
-      alert('🎮 KONAMI CODE ACTIVATED! You\'ve unlocked unlimited coding power!');
-    }
-  } else {
-    konamiCodePosition = 0;
+    alert('Keyboard Shortcuts:\n\n• ? - Show this help\n• Home - Go to homepage\n• End - Go to contact page\n• 1-5 - Navigate to different sections');
   }
 });

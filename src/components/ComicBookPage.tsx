@@ -37,11 +37,7 @@ const ComicBookPage = ({
       "0px 0px 0px rgba(0, 0, 0, 0.0)"
     ]
   );
-  const pageZIndex = useTransform(
-    flipProgress,
-    [0, 0.5, 0.5, 1],
-    [totalPages - pageNumber, totalPages + 50, totalPages + 50, pageNumber]
-  );
+  const pageZIndex = useMotionValue(totalPages - pageNumber);
   
   const handleFlip = () => {
     if (isFlipping) return;
@@ -51,15 +47,6 @@ const ComicBookPage = ({
     // Flip animation
     const flipDuration = 1.2;
     const targetValue = hasFlipped ? 0 : 1;
-    
-    const animation = {
-      type: 'spring',
-      stiffness: 60,
-      damping: 15,
-      duration: flipDuration
-    };
-    
-    flipProgress.set(hasFlipped ? 1 : 0);
     
     // Use framer-motion to animate properly
     const controls = {
@@ -79,6 +66,13 @@ const ComicBookPage = ({
           const newValue = startValue + (endValue - startValue) * easedProgress;
           
           flipProgress.set(newValue);
+          
+          // Update zIndex halfway through the animation
+          if (progress > 0.5 && !hasFlipped) {
+            pageZIndex.set(pageNumber);
+          } else if (progress > 0.5 && hasFlipped) {
+            pageZIndex.set(totalPages - pageNumber);
+          }
           
           if (progress < 1) {
             requestAnimationFrame(updateValue);
