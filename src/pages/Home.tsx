@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import SpeechBubble from '../components/SpeechBubble';
@@ -32,15 +31,13 @@ const Home = () => {
   const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
   useEffect(() => {
-    // Add animation delay
     const timer = setTimeout(() => {
       setShowIntro(true);
-    }, 200); // Reduced delay for faster loading
+    }, 200);
 
-    // Show particles after a short delay
     const particlesTimer = setTimeout(() => {
       setShowParticles(true);
-    }, 500); // Reduced delay for faster loading
+    }, 500);
 
     return () => {
       clearTimeout(timer);
@@ -68,7 +65,6 @@ const Home = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
   };
 
-  // Interactive particle effect for the hero section
   const Particles = () => {
     return showParticles ? (
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -114,7 +110,6 @@ const Home = () => {
             }
           }}
         >
-          {/* Hero Section with Modern Design */}
           <motion.div 
             className="flex flex-col items-center mb-12 relative overflow-hidden rounded-2xl"
             style={{ opacity, scale }}
@@ -142,9 +137,7 @@ const Home = () => {
               <span className="text-comic-orange">VERSE</span>
             </motion.h1>
             
-            {/* Hero content with interactive elements */}
             <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-4xl px-4 gap-8 relative z-10">
-              {/* Profile section */}
               <motion.div 
                 className="w-full md:w-1/3 flex flex-col items-center"
                 variants={fadeInUpVariants}
@@ -211,7 +204,6 @@ const Home = () => {
                 </motion.div>
               </motion.div>
               
-              {/* Introduction bubble with animation */}
               <motion.div 
                 className="w-full md:w-2/3"
                 variants={fadeInUpVariants}
@@ -225,7 +217,6 @@ const Home = () => {
                   </p>
                 </SpeechBubble>
                 
-                {/* Key skills highlights */}
                 <motion.div 
                   className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2"
                   variants={{
@@ -242,7 +233,7 @@ const Home = () => {
                   {[
                     { name: "Full-Stack", icon: <Code size={14} /> },
                     { name: "AI/ML", icon: <Brain size={14} /> },
-                    { name: "Blockchain", icon: <Link size={14} /> },
+                    { name: "Blockchain", icon: <Atom size={14} /> },
                     { name: "React", icon: <Atom size={14} /> }
                   ].map((skill, i) => (
                     <motion.div 
@@ -266,7 +257,6 @@ const Home = () => {
             </div>
           </motion.div>
 
-          {/* Innovative Skills Showcase */}
           <motion.div 
             className="mb-12 mt-8"
             variants={fadeInUpVariants}
@@ -286,9 +276,7 @@ const Home = () => {
                   <Sparkles className="inline-block ml-2 text-comic-pink" />
                 </motion.h2>
                 
-                {/* Innovative Orbital Skills Visualization */}
                 <div className="relative w-full h-[350px] bg-gradient-to-br from-blue-50 to-white rounded-xl overflow-hidden">
-                  {/* Central node */}
                   <motion.div 
                     className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10"
                     animate={{ 
@@ -308,16 +296,12 @@ const Home = () => {
                     </motion.div>
                   </motion.div>
                   
-                  {/* Inner orbit */}
                   <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[220px] h-[220px] rounded-full border border-gray-200 opacity-30"></div>
                   
-                  {/* Middle orbit */}
                   <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] rounded-full border border-gray-200 opacity-30"></div>
                   
-                  {/* Outer orbit */}
                   <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[460px] h-[460px] rounded-full border border-gray-200 opacity-30"></div>
                   
-                  {/* Inner orbit skills */}
                   {[
                     { name: "JavaScript", icon: "JS", color: "bg-comic-yellow", textColor: "text-black" },
                     { name: "React", icon: "⚛️", color: "bg-comic-blue", textColor: "text-white" },
@@ -344,7 +328,6 @@ const Home = () => {
                     </motion.div>
                   ))}
                   
-                  {/* Middle orbit skills */}
                   {[
                     { name: "Express", icon: "EX", color: "bg-comic-green", textColor: "text-white" },
                     { name: "TypeScript", icon: "TS", color: "bg-comic-blue", textColor: "text-white" },
@@ -372,7 +355,6 @@ const Home = () => {
                     </motion.div>
                   ))}
                   
-                  {/* Outer orbit skills */}
                   {[
                     { name: "AI/ML", icon: "🧠", color: "bg-comic-purple", textColor: "text-white" },
                     { name: "Blockchain", icon: "⛓️", color: "bg-comic-pink", textColor: "text-white" },
@@ -401,7 +383,6 @@ const Home = () => {
                     </motion.div>
                   ))}
                   
-                  {/* Connection lines */}
                   <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
                     <g stroke="#e2e8f0" strokeWidth="1" opacity="0.5">
                       {[...Array(12)].map((_, i) => (
@@ -435,9 +416,7 @@ const Home = () => {
             </div>
           </motion.div>
 
-          {/* Featured Content Sections */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-12">
-            {/* About Me Section */}
             <motion.div 
               variants={fadeInUpVariants}
               whileHover={{ y: -5 }}
@@ -485,7 +464,6 @@ const Home = () => {
               </Comic3DPanel>
             </motion.div>
 
-            {/* Projects Showcase */}
             <motion.div 
               variants={fadeInUpVariants}
               whileHover={{ y: -5 }}
@@ -548,7 +526,6 @@ const Home = () => {
             </motion.div>
           </div>
 
-          {/* Call to Action Section */}
           <motion.div 
             className="my-12 text-center"
             variants={fadeInUpVariants}
@@ -616,4 +593,3 @@ const Home = () => {
 };
 
 export default Home;
-
