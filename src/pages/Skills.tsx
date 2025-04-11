@@ -374,7 +374,8 @@ const Skills = () => {
         />
       </div>
       
-      <style jsx>{`
+      <style>
+        {`
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-10px); }
@@ -385,7 +386,8 @@ const Skills = () => {
         .drop-shadow-glow {
           filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };

@@ -22,6 +22,10 @@ const Skills = lazy(() => import("./pages/Skills"));
 const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
+// New interactive features
+const TimeTravel = lazy(() => import("./components/TimeTravel"));
+const CodeDNA = lazy(() => import("./components/CodeDNA"));
+
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -43,6 +47,8 @@ const App = () => {
                       <Route path="/projects" element={<Projects />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/skills" element={<Skills />} />
+                      <Route path="/timeline" element={<TimeTravel />} />
+                      <Route path="/dna" element={<CodeDNA />} />
                       <Route path="/contact" element={<Contact />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
