@@ -25,6 +25,8 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 // New interactive features
 const TimeTravel = lazy(() => import("./components/TimeTravel"));
 const CodeDNA = lazy(() => import("./components/CodeDNA"));
+const PortfolioGame = lazy(() => import("./components/PortfolioGame"));
+const ResumeBuilder = lazy(() => import("./components/ResumeBuilder"));
 
 const queryClient = new QueryClient();
 
@@ -49,6 +51,8 @@ const App = () => {
                       <Route path="/skills" element={<Skills />} />
                       <Route path="/timeline" element={<TimeTravel />} />
                       <Route path="/dna" element={<CodeDNA />} />
+                      <Route path="/game" element={<PortfolioGame />} />
+                      <Route path="/resume" element={<ResumeBuilder />} />
                       <Route path="/contact" element={<Contact />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
