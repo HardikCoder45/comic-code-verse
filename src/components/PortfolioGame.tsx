@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Gamepad, Medal, Star, Book, Code, Coffee, Heart, Zap, X, Shield, Cpu, Database, Globe, Award, Tool, AlertCircle } from 'lucide-react';
+import { Gamepad, Medal, Star, Book, Code, Coffee, Heart, Zap, X, Shield, Cpu, Database, Globe, Award, Wrench, AlertCircle } from 'lucide-react';
 import SpeechBubble from './SpeechBubble';
 import { toast } from 'sonner';
 
@@ -320,7 +320,7 @@ const gameLevels: GameLevel[] = [
         y: 200,
         width: 40,
         height: 40,
-        icon: <Tool size={24} />,
+        icon: <Wrench size={24} />,
         points: 150,
         title: 'Docker',
         description: 'Containerization platform',
