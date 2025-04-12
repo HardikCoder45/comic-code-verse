@@ -1,6 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { useSoundEffects } from '../hooks/useSoundEffects';
 
 interface Comic3DPanelProps {
   title: string;
@@ -25,6 +26,7 @@ const Comic3DPanel = ({
 }: Comic3DPanelProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const { playSound } = useSoundEffects();
   
   // Motion values for 3D effect
   const x = useMotionValue(0);
@@ -77,6 +79,17 @@ const Comic3DPanel = ({
     }
   };
   
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    playSound('hover');
+  };
+  
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    x.set(0);
+    y.set(0);
+  };
+  
   return (
     <motion.div
       className={`relative overflow-hidden rounded-xl border-4 border-comic-border ${className}`}
@@ -85,12 +98,8 @@ const Comic3DPanel = ({
         transformStyle: 'preserve-3d',
         perspective: '1000px'
       }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => {
-        setIsHovered(false);
-        x.set(0);
-        y.set(0);
-      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onMouseMove={handleMouseMove}
       whileTap={{ scale: 0.98 }}
     >

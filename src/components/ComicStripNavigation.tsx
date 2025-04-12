@@ -1,13 +1,15 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import SpeechBubble from './SpeechBubble';
-import { Home, BookOpen, User, Image, MessageSquare, Calendar, Gamepad, FileText, Dna } from 'lucide-react';
+import { Home, BookOpen, User, Image, MessageSquare, Calendar, Gamepad, FileText, Dna, Code } from 'lucide-react';
+import { useSoundEffects } from '../hooks/useSoundEffects';
 
 const ComicStripNavigation = () => {
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const { playSound } = useSoundEffects();
   
   const navItems = [
     { path: '/home', label: 'Home', icon: Home, color: 'bg-comic-blue' },
@@ -15,11 +17,21 @@ const ComicStripNavigation = () => {
     { path: '/about', label: 'About', icon: User, color: 'bg-comic-orange' },
     { path: '/skills', label: 'Skills', icon: Image, color: 'bg-comic-green' },
     { path: '/timeline', label: 'Timeline', icon: Calendar, color: 'bg-comic-purple' },
+    { path: '/code-samples', label: 'Code', icon: Code, color: 'bg-comic-green' },
     { path: '/game', label: 'Game', icon: Gamepad, color: 'bg-comic-yellow' },
     { path: '/resume', label: 'Resume', icon: FileText, color: 'bg-comic-blue' },
     { path: '/dna', label: 'Code DNA', icon: Dna, color: 'bg-comic-pink' },
     { path: '/contact', label: 'Contact', icon: MessageSquare, color: 'bg-comic-purple' }
   ];
+
+  useEffect(() => {
+    // Play transition sound when navigation changes
+    const unlisten = () => {
+      playSound('transition');
+    };
+    
+    return unlisten;
+  }, [location.pathname]);
 
   return (
     <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
@@ -33,8 +45,12 @@ const ComicStripNavigation = () => {
               <Link 
                 to={item.path}
                 className={`block p-3 rounded-lg transition-all ${isActive ? item.color + ' text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
-                onMouseEnter={() => setHoveredItem(item.path)}
+                onMouseEnter={() => {
+                  setHoveredItem(item.path);
+                  playSound('hover');
+                }}
                 onMouseLeave={() => setHoveredItem(null)}
+                onClick={() => playSound('click')}
               >
                 <item.icon size={24} />
                 

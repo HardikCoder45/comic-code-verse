@@ -1,0 +1,9 @@
+
+Place sound files in this directory:
+- click.mp3: Button click sound
+- hover.mp3: Hover sound
+- whoosh.mp3: Page transition sound
+- transition.mp3: Navigation transition sound
+- notification.mp3: Notification sound
+- success.mp3: Success sound
+- error.mp3: Error sound

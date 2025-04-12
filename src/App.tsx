@@ -11,6 +11,8 @@ import ComicStripNavigation from "./components/ComicStripNavigation";
 import InteractiveAvatar from "./components/InteractiveAvatar";
 import ComicLoading from "./components/ComicLoading";
 import ChatBot from "./components/ChatBot";
+import VoiceControl from "./components/VoiceControl";
+import PageSlider from "./components/PageSlider";
 
 // Pages
 import Landing from "./pages/Landing";
@@ -20,6 +22,7 @@ const About = lazy(() => import("./pages/About"));
 const Skills = lazy(() => import("./pages/Skills"));
 const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const CodeSandboxes = lazy(() => import("./pages/CodeSandboxes"));
 
 // New interactive features
 const TimeTravel = lazy(() => import("./components/TimeTravel"));
@@ -48,6 +51,7 @@ const App = () => {
                       <Route path="/about" element={<About />} />
                       <Route path="/skills" element={<Skills />} />
                       <Route path="/timeline" element={<TimeTravel />} />
+                      <Route path="/code-samples" element={<CodeSandboxes />} />
                       <Route path="/dna" element={<CodeDNA />} />
                       <Route path="/game" element={<PortfolioGame />} />
                       <Route path="/resume" element={<ResumeBuilder />} />
@@ -58,6 +62,8 @@ const App = () => {
                 </Suspense>
                 <ComicStripNavigation />
                 <InteractiveAvatar />
+                <VoiceControl />
+                <PageSlider />
                 <ChatBot />
               </div>
             } />
