@@ -14,6 +14,9 @@ import ChatBot from "./components/ChatBot";
 import VoiceControl from "./components/VoiceControl";
 import PageSlider from "./components/PageSlider";
 
+// Providers
+import { SoundProvider } from "./contexts/SoundContext";
+
 // Pages
 import Landing from "./pages/Landing";
 const Home = lazy(() => import("./pages/Home"));
@@ -38,37 +41,39 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="*" element={
-              <div className="min-h-screen w-full flex relative">
-                <Suspense fallback={<ComicLoading message="Loading..." />}>
-                  <main className="flex-1 ml-0">
-                    <Routes>
-                      <Route path="/home" element={<Home />} />
-                      <Route path="/projects" element={<Projects />} />
-                      <Route path="/about" element={<About />} />
-                      <Route path="/skills" element={<Skills />} />
-                      <Route path="/timeline" element={<TimeTravel />} />
-                      <Route path="/code-samples" element={<CodeSandboxes />} />
-                      <Route path="/dna" element={<CodeDNA />} />
-                      <Route path="/game" element={<PortfolioGame />} />
-                      <Route path="/resume" element={<ResumeBuilder />} />
-                      <Route path="/contact" element={<Contact />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </main>
-                </Suspense>
-                <ComicStripNavigation />
-                <InteractiveAvatar />
-                <VoiceControl />
-                <PageSlider />
-                <ChatBot />
-              </div>
-            } />
-          </Routes>
-        </BrowserRouter>
+        <SoundProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="*" element={
+                <div className="min-h-screen w-full flex relative">
+                  <Suspense fallback={<ComicLoading message="Loading..." />}>
+                    <main className="flex-1 ml-0">
+                      <Routes>
+                        <Route path="/home" element={<Home />} />
+                        <Route path="/projects" element={<Projects />} />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/skills" element={<Skills />} />
+                        <Route path="/timeline" element={<TimeTravel />} />
+                        <Route path="/code-samples" element={<CodeSandboxes />} />
+                        <Route path="/dna" element={<CodeDNA />} />
+                        <Route path="/game" element={<PortfolioGame />} />
+                        <Route path="/resume" element={<ResumeBuilder />} />
+                        <Route path="/contact" element={<Contact />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </main>
+                  </Suspense>
+                  <ComicStripNavigation />
+                  <InteractiveAvatar />
+                  <VoiceControl />
+                  <PageSlider />
+                  <ChatBot />
+                </div>
+              } />
+            </Routes>
+          </BrowserRouter>
+        </SoundProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

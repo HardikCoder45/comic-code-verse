@@ -4,12 +4,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import SpeechBubble from './SpeechBubble';
 import { Home, BookOpen, User, Image, MessageSquare, Calendar, Gamepad, FileText, Dna, Code } from 'lucide-react';
-import { useSoundEffects } from '../hooks/useSoundEffects';
+import { useSound } from '../contexts/SoundContext';
 
 const ComicStripNavigation = () => {
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const { playSound } = useSoundEffects();
+  const { playSound } = useSound();
   
   const navItems = [
     { path: '/home', label: 'Home', icon: Home, color: 'bg-comic-blue' },
@@ -35,7 +35,12 @@ const ComicStripNavigation = () => {
 
   return (
     <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
-      <div className="bg-white border-4 border-black rounded-xl p-2 shadow-lg flex flex-wrap justify-center gap-2 max-w-4xl">
+      <motion.div 
+        className="bg-white border-4 border-black rounded-xl p-2 shadow-lg flex flex-wrap justify-center gap-2 max-w-4xl"
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: "backOut" }}
+      >
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           const isHovered = hoveredItem === item.path;
@@ -50,7 +55,10 @@ const ComicStripNavigation = () => {
                   playSound('hover');
                 }}
                 onMouseLeave={() => setHoveredItem(null)}
-                onClick={() => playSound('click')}
+                onClick={() => {
+                  playSound('click');
+                  setTimeout(() => playSound('pageFlip'), 100);
+                }}
               >
                 <item.icon size={24} />
                 
@@ -59,6 +67,7 @@ const ComicStripNavigation = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap"
+                    onAnimationStart={() => playSound('speechBubble')}
                   >
                     <SpeechBubble type="speech" color="yellow" position="bottom" className="py-1 px-2">
                       <span className="font-comic text-sm font-bold">{item.label}</span>
@@ -77,7 +86,7 @@ const ComicStripNavigation = () => {
             </div>
           );
         })}
-      </div>
+      </motion.div>
     </div>
   );
 };

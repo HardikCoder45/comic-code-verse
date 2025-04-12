@@ -7,3 +7,31 @@ Place sound files in this directory:
 - notification.mp3: Notification sound
 - success.mp3: Success sound
 - error.mp3: Error sound
+- page-flip.mp3: Comic book page flip sound
+- pop-in.mp3: Element appearing sound
+- speech-bubble.mp3: Speech bubble appearance sound
+- typewriter.mp3: Text typing sound
+- muffled-voice.mp3: Robot/muffled voice sound
+- hero-entrance.mp3: Hero arrival sound
+- electric-zap.mp3: Electric/tech power sound
+- energy-charge.mp3: Energy charging sound
+- keyboard-typing.mp3: Keyboard typing sound
+- terminal-beep.mp3: Terminal/computer beep sound
+- glitch-effect.mp3: Glitch/error sound effect
+- level-up.mp3: Level up/achievement sound
+- achievement-unlock.mp3: Achievement notification sound
+- neural-tone.mp3: AI thinking sound
+- robot-beep.mp3: Robot sound effect
+- voice-assistant.mp3: Voice assistant wake sound
+- footsteps.mp3: Footstep sound effect
+- magnifying-glass.mp3: Inspection sound
+- suspense-music.mp3: Dramatic suspense music
+- spell-cast.mp3: Magical spell effect
+- twinkle.mp3: Sparkle/twinkle sound
+- teleport.mp3: Teleport/whoosh sound
+- cafe-ambience.mp3: Cafe background sound
+- server-room.mp3: Server room ambience
+- rain.mp3: Rain ambience sound
+- 8bit-music.mp3: 8-bit background music
+- lofi-beats.mp3: Lo-fi background music
+- high-energy-synth.mp3: High-energy synth music
