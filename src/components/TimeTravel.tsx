@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Award, BookOpen, Code, Briefcase, Lightbulb, Rocket, Server, Globe, FileCode, Coffee, Heart, Zap, Star, Tool } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight, Award, BookOpen, Code, Briefcase, Lightbulb, Rocket, Server, Globe, FileCode, Coffee, Heart, Zap, Star, Wrench, X } from 'lucide-react';
 import ComicPanel from './ComicPanel';
 import SpeechBubble from './SpeechBubble';
 
@@ -88,7 +88,7 @@ const timelineEvents: TimelineEvent[] = [
       }
     ],
     techStack: ["HTML5", "CSS3", "JavaScript", "jQuery", "Bootstrap", "Git"],
-    testimonial: "One of the most dedicated students I've seen. Always going beyond what was required." - Bootcamp Instructor",
+    testimonial: "One of the most dedicated students I've seen. Always going beyond what was required. - Bootcamp Instructor",
     impact: "Transformed from a hobbyist to a professional developer with industry-ready skills"
   },
   {
@@ -138,7 +138,7 @@ const timelineEvents: TimelineEvent[] = [
       }
     ],
     techStack: ["React", "Next.js", "Tailwind CSS", "Stripe", "Netlify"],
-    testimonial: "Working with you transformed our online presence. Sales increased by 35% in the first quarter after launch." - E-commerce Client",
+    testimonial: "Working with you transformed our online presence. Sales increased by 35% in the first quarter after launch. - E-commerce Client",
     impact: "Developed crucial client communication skills and learned to manage projects independently"
   },
   {
@@ -247,7 +247,7 @@ const timelineEvents: TimelineEvent[] = [
       }
     ],
     techStack: ["Docker", "Kubernetes", "Jenkins", "TypeScript", "Agile/Scrum", "Jira"],
-    testimonial: "Your leadership transformed our development process. The team is more productive and happier than ever." - CTO",
+    testimonial: "Your leadership transformed our development process. The team is more productive and happier than ever. - CTO",
     impact: "Developed leadership and mentoring skills while deepening technical expertise"
   },
   {
@@ -329,7 +329,7 @@ const timelineEvents: TimelineEvent[] = [
       }
     ],
     techStack: ["IoT", "Arduino", "Solar Power", "Low-cost Sensors", "Data Visualization"],
-    testimonial: "Your water monitoring system has transformed how we manage our resources. Thank you for making a difference." - Community Leader",
+    testimonial: "Your water monitoring system has transformed how we manage our resources. Thank you for making a difference. - Community Leader",
     impact: "Combined technical skills with personal values to create meaningful impact"
   },
   {
@@ -337,7 +337,7 @@ const timelineEvents: TimelineEvent[] = [
     title: "Future Plans",
     description: "Working on launching a SaaS product focused on developer productivity tools. Exploring Web3 and blockchain technologies.",
     type: "project",
-    icon: <Tool size={24} />,
+    icon: <Wrench size={24} />,
     color: "green",
     subEvents: [
       {
