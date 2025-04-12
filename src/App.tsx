@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 
 // Components
-import ComicSidebar from "./components/ComicSidebar";
 import ComicStripNavigation from "./components/ComicStripNavigation";
 import InteractiveAvatar from "./components/InteractiveAvatar";
 import ComicLoading from "./components/ComicLoading";
@@ -41,9 +40,8 @@ const App = () => {
             <Route path="/" element={<Landing />} />
             <Route path="*" element={
               <div className="min-h-screen w-full flex relative">
-                <ComicSidebar />
                 <Suspense fallback={<ComicLoading message="Loading..." />}>
-                  <main className="flex-1">
+                  <main className="flex-1 ml-0">
                     <Routes>
                       <Route path="/home" element={<Home />} />
                       <Route path="/projects" element={<Projects />} />

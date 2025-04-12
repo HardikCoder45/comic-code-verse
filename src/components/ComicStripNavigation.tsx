@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import SpeechBubble from './SpeechBubble';
-import { Home, BookOpen, User, Image, MessageSquare } from 'lucide-react';
+import { Home, BookOpen, User, Image, MessageSquare, Calendar, Gamepad, FileText, Dna } from 'lucide-react';
 
 const ComicStripNavigation = () => {
   const location = useLocation();
@@ -14,12 +14,16 @@ const ComicStripNavigation = () => {
     { path: '/projects', label: 'Projects', icon: BookOpen, color: 'bg-comic-pink' },
     { path: '/about', label: 'About', icon: User, color: 'bg-comic-orange' },
     { path: '/skills', label: 'Skills', icon: Image, color: 'bg-comic-green' },
+    { path: '/timeline', label: 'Timeline', icon: Calendar, color: 'bg-comic-purple' },
+    { path: '/game', label: 'Game', icon: Gamepad, color: 'bg-comic-yellow' },
+    { path: '/resume', label: 'Resume', icon: FileText, color: 'bg-comic-blue' },
+    { path: '/dna', label: 'Code DNA', icon: Dna, color: 'bg-comic-pink' },
     { path: '/contact', label: 'Contact', icon: MessageSquare, color: 'bg-comic-purple' }
   ];
 
   return (
     <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
-      <div className="bg-white border-4 border-black rounded-xl p-2 shadow-lg flex space-x-2">
+      <div className="bg-white border-4 border-black rounded-xl p-2 shadow-lg flex flex-wrap justify-center gap-2 max-w-4xl">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           const isHovered = hoveredItem === item.path;
