@@ -7,10 +7,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 
 // Components
-import ComicStripNavigation from "./components/ComicStripNavigation";
+import BottomNavigation from "./components/BottomNavigation";
 import InteractiveAvatar from "./components/InteractiveAvatar";
 import ComicLoading from "./components/ComicLoading";
 import ChatBot from "./components/ChatBot";
+import AISidekick from "./components/AISidekick";
+import ThemeToggle from "./components/ThemeToggle";
 
 // Pages
 import Landing from "./pages/Landing";
@@ -20,8 +22,9 @@ const About = lazy(() => import("./pages/About"));
 const Skills = lazy(() => import("./pages/Skills"));
 const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const CodeSandboxes = lazy(() => import("./pages/CodeSandboxes"));
 
-// New interactive features
+// Interactive features
 const TimeTravel = lazy(() => import("./components/TimeTravel"));
 const CodeDNA = lazy(() => import("./components/CodeDNA"));
 const PortfolioGame = lazy(() => import("./components/PortfolioGame"));
@@ -41,7 +44,7 @@ const App = () => {
             <Route path="*" element={
               <div className="min-h-screen w-full flex relative">
                 <Suspense fallback={<ComicLoading message="Loading..." />}>
-                  <main className="flex-1 ml-0">
+                  <main className="flex-1 ml-0 pb-20">
                     <Routes>
                       <Route path="/home" element={<Home />} />
                       <Route path="/projects" element={<Projects />} />
@@ -51,14 +54,17 @@ const App = () => {
                       <Route path="/dna" element={<CodeDNA />} />
                       <Route path="/game" element={<PortfolioGame />} />
                       <Route path="/resume" element={<ResumeBuilder />} />
+                      <Route path="/sandboxes" element={<CodeSandboxes />} />
                       <Route path="/contact" element={<Contact />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </main>
                 </Suspense>
-                <ComicStripNavigation />
+                <BottomNavigation />
                 <InteractiveAvatar />
                 <ChatBot />
+                <AISidekick />
+                <ThemeToggle />
               </div>
             } />
           </Routes>
