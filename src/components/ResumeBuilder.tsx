@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,23 +10,18 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/components/ui/use-toast';
 import { motion } from 'framer-motion';
 import { Loader2, Download, Copy, Check, ChevronsUpDown, Send, RefreshCcw, Save } from 'lucide-react';
-import { 
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import SpeechBubble from './SpeechBubble';
-
 interface ResumeSection {
   id: string;
   title: string;
   enabled: boolean;
   content: string;
 }
-
 const ResumeBuilder: React.FC = () => {
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [resumeHTML, setResumeHTML] = useState<string>('');
   const [activeTab, setActiveTab] = useState<string>('build');
@@ -42,53 +36,99 @@ const ResumeBuilder: React.FC = () => {
   const [generateComplete, setGenerateComplete] = useState(false);
 
   // Resume sections
-  const [sections, setSections] = useState<ResumeSection[]>([
-    { id: 'summary', title: 'Professional Summary', enabled: true, content: '' },
-    { id: 'experience', title: 'Work Experience', enabled: true, content: '' },
-    { id: 'education', title: 'Education', enabled: true, content: '' },
-    { id: 'skills', title: 'Skills', enabled: true, content: '' },
-    { id: 'projects', title: 'Projects', enabled: false, content: '' },
-    { id: 'certifications', title: 'Certifications', enabled: false, content: '' },
-    { id: 'languages', title: 'Languages', enabled: false, content: '' },
-    { id: 'achievements', title: 'Achievements', enabled: false, content: '' },
-    { id: 'interests', title: 'Interests', enabled: false, content: '' },
-  ]);
+  const [sections, setSections] = useState<ResumeSection[]>([{
+    id: 'summary',
+    title: 'Professional Summary',
+    enabled: true,
+    content: ''
+  }, {
+    id: 'experience',
+    title: 'Work Experience',
+    enabled: true,
+    content: ''
+  }, {
+    id: 'education',
+    title: 'Education',
+    enabled: true,
+    content: ''
+  }, {
+    id: 'skills',
+    title: 'Skills',
+    enabled: true,
+    content: ''
+  }, {
+    id: 'projects',
+    title: 'Projects',
+    enabled: false,
+    content: ''
+  }, {
+    id: 'certifications',
+    title: 'Certifications',
+    enabled: false,
+    content: ''
+  }, {
+    id: 'languages',
+    title: 'Languages',
+    enabled: false,
+    content: ''
+  }, {
+    id: 'achievements',
+    title: 'Achievements',
+    enabled: false,
+    content: ''
+  }, {
+    id: 'interests',
+    title: 'Interests',
+    enabled: false,
+    content: ''
+  }]);
 
   // Example resume styles
-  const resumeStyles = [
-    { id: 'modern', name: 'Modern', color: 'bg-blue-500' },
-    { id: 'professional', name: 'Professional', color: 'bg-gray-700' },
-    { id: 'creative', name: 'Creative', color: 'bg-purple-500' },
-    { id: 'minimal', name: 'Minimal', color: 'bg-emerald-500' },
-    { id: 'academic', name: 'Academic', color: 'bg-amber-600' },
-  ];
+  const resumeStyles = [{
+    id: 'modern',
+    name: 'Modern',
+    color: 'bg-blue-500'
+  }, {
+    id: 'professional',
+    name: 'Professional',
+    color: 'bg-gray-700'
+  }, {
+    id: 'creative',
+    name: 'Creative',
+    color: 'bg-purple-500'
+  }, {
+    id: 'minimal',
+    name: 'Minimal',
+    color: 'bg-emerald-500'
+  }, {
+    id: 'academic',
+    name: 'Academic',
+    color: 'bg-amber-600'
+  }];
 
   // Toggle section enabled status
   const toggleSection = (id: string) => {
-    setSections(
-      sections.map((section) =>
-        section.id === id ? { ...section, enabled: !section.enabled } : section
-      )
-    );
+    setSections(sections.map(section => section.id === id ? {
+      ...section,
+      enabled: !section.enabled
+    } : section));
   };
 
   // Update section content
   const updateSectionContent = (id: string, content: string) => {
-    setSections(
-      sections.map((section) =>
-        section.id === id ? { ...section, content } : section
-      )
-    );
+    setSections(sections.map(section => section.id === id ? {
+      ...section,
+      content
+    } : section));
   };
 
   // Generate the resume using AI
   const generateResume = async () => {
     setIsLoading(true);
-    
     try {
       // Prepare the active sections for the prompt
       const activeSections = sections.filter(section => section.enabled);
-      
+
       // Construct the prompt for the AI
       let prompt = 'Generate a professional resume in clean HTML format with the following information:\n\n';
       prompt += `Name: ${fullName}\n`;
@@ -97,25 +137,23 @@ const ResumeBuilder: React.FC = () => {
       prompt += `Phone: ${phone}\n`;
       prompt += `Location: ${location}\n`;
       prompt += `Style: ${resumeStyle}\n\n`;
-      
+
       // Add the content for each active section
       activeSections.forEach(section => {
         prompt += `${section.title}: ${section.content || 'Please generate appropriate content'}\n\n`;
       });
-      
+
       // Add custom instructions if provided
       if (customPrompt.trim()) {
         prompt += `Additional Instructions: ${customPrompt}\n\n`;
       }
-      
       prompt += "Only output clean, semantic HTML without any scripts or external CSS. Use inline styles for formatting. The HTML should be for the resume content only, no need for a full HTML document structure with html, head, or body tags.";
-      
+
       // Simulate API call (replace with actual API call)
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       // Generate a sample resume HTML based on the style and sections
       let generatedHTML = '';
-      
       if (resumeStyle === 'modern') {
         generatedHTML = generateModernResumeHTML();
       } else if (resumeStyle === 'professional') {
@@ -127,21 +165,19 @@ const ResumeBuilder: React.FC = () => {
       } else if (resumeStyle === 'academic') {
         generatedHTML = generateAcademicResumeHTML();
       }
-      
       setResumeHTML(generatedHTML);
       setActiveTab('preview');
       setGenerateComplete(true);
-      
       toast({
         title: "Resume Generated!",
-        description: "Your resume has been successfully created.",
+        description: "Your resume has been successfully created."
       });
     } catch (error) {
       console.error('Error generating resume:', error);
       toast({
         variant: "destructive",
         title: "Failed to generate resume",
-        description: "Please try again later.",
+        description: "Please try again later."
       });
     } finally {
       setIsLoading(false);
@@ -1067,17 +1103,16 @@ const ResumeBuilder: React.FC = () => {
       textArea.select();
       document.execCommand('copy');
       document.body.removeChild(textArea);
-      
       toast({
         title: "Copied to clipboard",
-        description: "Resume HTML has been copied to your clipboard.",
+        description: "Resume HTML has been copied to your clipboard."
       });
     } catch (error) {
       console.error('Failed to copy text: ', error);
       toast({
         variant: "destructive",
         title: "Failed to copy",
-        description: "Could not copy resume to clipboard.",
+        description: "Could not copy resume to clipboard."
       });
     }
   };
@@ -1085,7 +1120,9 @@ const ResumeBuilder: React.FC = () => {
   // Function to handle download
   const handleDownload = () => {
     try {
-      const blob = new Blob([resumeHTML], { type: 'text/html' });
+      const blob = new Blob([resumeHTML], {
+        type: 'text/html'
+      });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -1094,27 +1131,24 @@ const ResumeBuilder: React.FC = () => {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      
       toast({
         title: "Resume Downloaded",
-        description: "Your resume has been downloaded as an HTML file.",
+        description: "Your resume has been downloaded as an HTML file."
       });
     } catch (error) {
       console.error('Download error:', error);
       toast({
         variant: "destructive",
         title: "Download Failed",
-        description: "Could not download the resume file.",
+        description: "Could not download the resume file."
       });
     }
   };
-
-  return (
-    <div className="container mx-auto py-8 px-4">
+  return <div className="container mx-auto py-8 px-4">
       <div className="flex justify-center mb-8">
         <SpeechBubble type="speech" color="blue" className="max-w-2xl">
-          <h1 className="text-2xl font-bold mb-2 font-comic">AI-Powered Resume Builder</h1>
-          <p className="font-comic">Create a professional resume in minutes! Fill in your information, customize sections, and let AI help polish your career story.</p>
+          <h1 className="text-2xl font-bold mb-2 font-comic text-comic-blue">AI-Powered Resume Builder</h1>
+          <p className="font-comic text-black">Create a professional resume in minutes! Fill in your information, customize sections, and let AI help polish your career story.</p>
         </SpeechBubble>
       </div>
 
@@ -1140,49 +1174,23 @@ const ResumeBuilder: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="fullName">Full Name</Label>
-                  <Input 
-                    id="fullName" 
-                    placeholder="e.g. John Doe" 
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                  />
+                  <Input id="fullName" placeholder="e.g. John Doe" value={fullName} onChange={e => setFullName(e.target.value)} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="jobTitle">Job Title</Label>
-                  <Input 
-                    id="jobTitle" 
-                    placeholder="e.g. Software Engineer" 
-                    value={jobTitle}
-                    onChange={(e) => setJobTitle(e.target.value)}
-                  />
+                  <Input id="jobTitle" placeholder="e.g. Software Engineer" value={jobTitle} onChange={e => setJobTitle(e.target.value)} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="e.g. john.doe@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
+                  <Input id="email" type="email" placeholder="e.g. john.doe@example.com" value={email} onChange={e => setEmail(e.target.value)} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone</Label>
-                  <Input 
-                    id="phone" 
-                    placeholder="e.g. (123) 456-7890" 
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
+                  <Input id="phone" placeholder="e.g. (123) 456-7890" value={phone} onChange={e => setPhone(e.target.value)} />
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="location">Location</Label>
-                  <Input 
-                    id="location" 
-                    placeholder="e.g. San Francisco, CA" 
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                  />
+                  <Input id="location" placeholder="e.g. San Francisco, CA" value={location} onChange={e => setLocation(e.target.value)} />
                 </div>
               </div>
             </CardContent>
@@ -1198,35 +1206,20 @@ const ResumeBuilder: React.FC = () => {
             <CardContent>
               <div className="space-y-4">
                 <Accordion type="multiple" defaultValue={sections.filter(s => s.enabled).map(s => s.id)}>
-                  {sections.map((section) => (
-                    <AccordionItem value={section.id} key={section.id}>
+                  {sections.map(section => <AccordionItem value={section.id} key={section.id}>
                       <div className="flex items-center px-4">
-                        <Checkbox 
-                          id={`enable-${section.id}`}
-                          checked={section.enabled}
-                          onCheckedChange={() => toggleSection(section.id)}
-                          className="mr-3"
-                        />
+                        <Checkbox id={`enable-${section.id}`} checked={section.enabled} onCheckedChange={() => toggleSection(section.id)} className="mr-3" />
                         <AccordionTrigger className="flex-1 hover:no-underline">
                           {section.title}
                         </AccordionTrigger>
                       </div>
                       <AccordionContent className="px-4 pt-2">
-                        <Textarea 
-                          placeholder={`Enter your ${section.title.toLowerCase()} information...`}
-                          value={section.content}
-                          onChange={(e) => updateSectionContent(section.id, e.target.value)}
-                          disabled={!section.enabled}
-                          className="min-h-[120px]"
-                        />
-                        {section.id === 'summary' && section.enabled && (
-                          <p className="text-sm text-gray-500 mt-2">
+                        <Textarea placeholder={`Enter your ${section.title.toLowerCase()} information...`} value={section.content} onChange={e => updateSectionContent(section.id, e.target.value)} disabled={!section.enabled} className="min-h-[120px]" />
+                        {section.id === 'summary' && section.enabled && <p className="text-sm text-gray-500 mt-2">
                             Tip: A strong summary highlights your most relevant skills and experience in 3-5 sentences.
-                          </p>
-                        )}
+                          </p>}
                       </AccordionContent>
-                    </AccordionItem>
-                  ))}
+                    </AccordionItem>)}
                 </Accordion>
               </div>
             </CardContent>
@@ -1244,80 +1237,48 @@ const ResumeBuilder: React.FC = () => {
                 <div className="space-y-2">
                   <Label>Choose Resume Style</Label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mt-2">
-                    {resumeStyles.map((style) => (
-                      <div
-                        key={style.id}
-                        className={`cursor-pointer transition-all duration-200 border-2 rounded-lg overflow-hidden ${
-                          resumeStyle === style.id 
-                            ? 'ring-2 ring-offset-2 ring-blue-500 border-blue-500 scale-105' 
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                        onClick={() => setResumeStyle(style.id)}
-                      >
+                    {resumeStyles.map(style => <div key={style.id} className={`cursor-pointer transition-all duration-200 border-2 rounded-lg overflow-hidden ${resumeStyle === style.id ? 'ring-2 ring-offset-2 ring-blue-500 border-blue-500 scale-105' : 'border-gray-200 hover:border-gray-300'}`} onClick={() => setResumeStyle(style.id)}>
                         <div className={`${style.color} h-3`}></div>
                         <div className="p-3 text-center">
                           <p className="font-medium">{style.name}</p>
                         </div>
-                      </div>
-                    ))}
+                      </div>)}
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="useAI" className="cursor-pointer">Use AI to enhance resume</Label>
-                    <Switch
-                      id="useAI"
-                      checked={useAI}
-                      onCheckedChange={setUseAI}
-                    />
+                    <Switch id="useAI" checked={useAI} onCheckedChange={setUseAI} />
                   </div>
                   <p className="text-sm text-gray-500">
                     Let our AI improve your resume with professional language and formatting
                   </p>
                 </div>
 
-                {useAI && (
-                  <div className="space-y-2 pt-2">
+                {useAI && <div className="space-y-2 pt-2">
                     <Label htmlFor="customPrompt">Custom Instructions (optional)</Label>
-                    <Textarea
-                      id="customPrompt"
-                      placeholder="e.g. Focus on leadership skills, use action verbs, highlight teamwork..."
-                      value={customPrompt}
-                      onChange={(e) => setCustomPrompt(e.target.value)}
-                      className="min-h-[100px]"
-                    />
-                  </div>
-                )}
+                    <Textarea id="customPrompt" placeholder="e.g. Focus on leadership skills, use action verbs, highlight teamwork..." value={customPrompt} onChange={e => setCustomPrompt(e.target.value)} className="min-h-[100px]" />
+                  </div>}
               </div>
             </CardContent>
           </Card>
 
           <div className="flex justify-center">
-            <Button 
-              onClick={generateResume} 
-              disabled={isLoading}
-              size="lg"
-              className="text-lg px-8 py-6"
-            >
-              {isLoading ? (
-                <>
+            <Button onClick={generateResume} disabled={isLoading} size="lg" className="text-lg px-8 py-6">
+              {isLoading ? <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Generating Resume...
-                </>
-              ) : (
-                <>
+                </> : <>
                   <Send className="mr-2 h-5 w-5" />
                   Generate Resume
-                </>
-              )}
+                </>}
             </Button>
           </div>
         </TabsContent>
 
         <TabsContent value="preview" className="space-y-6">
-          {resumeHTML && (
-            <>
+          {resumeHTML && <>
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
@@ -1336,67 +1297,57 @@ const ResumeBuilder: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="bg-white border rounded-md overflow-auto max-h-[800px] shadow-inner p-6">
-                    <div dangerouslySetInnerHTML={{ __html: resumeHTML }} />
+                    <div dangerouslySetInnerHTML={{
+                  __html: resumeHTML
+                }} />
                   </div>
                 </CardContent>
               </Card>
 
               <div className="flex justify-between">
-                <Button
-                  variant="outline"
-                  onClick={() => setActiveTab('build')}
-                >
+                <Button variant="outline" onClick={() => setActiveTab('build')}>
                   <ChevronsUpDown className="mr-2 h-4 w-4" />
                   Edit Resume
                 </Button>
                 
                 <div className="space-x-2">
-                  <Button 
-                    variant="secondary"
-                    onClick={() => {
-                      setIsLoading(true);
-                      setTimeout(() => {
-                        // Generate a different style
-                        const currentStyleIndex = resumeStyles.findIndex(s => s.id === resumeStyle);
-                        const nextStyleIndex = (currentStyleIndex + 1) % resumeStyles.length;
-                        setResumeStyle(resumeStyles[nextStyleIndex].id);
-                        generateResume();
-                      }, 500);
-                    }}
-                    disabled={isLoading}
-                  >
+                  <Button variant="secondary" onClick={() => {
+                setIsLoading(true);
+                setTimeout(() => {
+                  // Generate a different style
+                  const currentStyleIndex = resumeStyles.findIndex(s => s.id === resumeStyle);
+                  const nextStyleIndex = (currentStyleIndex + 1) % resumeStyles.length;
+                  setResumeStyle(resumeStyles[nextStyleIndex].id);
+                  generateResume();
+                }, 500);
+              }} disabled={isLoading}>
                     <RefreshCcw className="mr-2 h-4 w-4" />
                     Try Different Style
                   </Button>
                   
-                  <Button 
-                    variant="default"
-                    onClick={handleDownload}
-                  >
+                  <Button variant="default" onClick={handleDownload}>
                     <Save className="mr-2 h-4 w-4" />
                     Save Resume
                   </Button>
                 </div>
               </div>
-            </>
-          )}
+            </>}
         </TabsContent>
       </Tabs>
 
-      {generateComplete && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="mt-8 text-center"
-        >
+      {generateComplete && <motion.div initial={{
+      opacity: 0,
+      y: 20
+    }} animate={{
+      opacity: 1,
+      y: 0
+    }} transition={{
+      delay: 0.5
+    }} className="mt-8 text-center">
           <SpeechBubble type="thought" color="green" className="inline-block">
             <p className="font-comic">Great job! Your resume looks professional. Download it or keep editing to perfect it.</p>
           </SpeechBubble>
-        </motion.div>
-      )}
-    </div>
-  );
+        </motion.div>}
+    </div>;
 };
-
 export default ResumeBuilder;
