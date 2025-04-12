@@ -146,12 +146,8 @@ const InteractiveAvatar = () => {
   return <div className="fixed right-6 bottom-24 z-50">
       <div className="flex flex-col items-end">
         <div className="flex space-x-2 mb-2">
-          <button onClick={toggleEmotionSelector} className="bg-comic-purple text-white rounded-full w-8 h-8 flex items-center justify-center border-2 border-black shadow-md hover:bg-comic-pink transition-colors" title="Change emotion">
-            😊
-          </button>
-          <button onClick={changeAvatar} className="bg-comic-green text-white rounded-full w-8 h-8 flex items-center justify-center border-2 border-black shadow-md hover:bg-comic-pink transition-colors" title="Change avatar">
-            👤
-          </button>
+          
+          
           <button onClick={toggleVisibility} className="bg-comic-orange text-white rounded-full w-8 h-8 flex items-center justify-center border-2 border-black shadow-md hover:bg-comic-pink transition-colors" title={isVisible ? "Hide avatar" : "Show avatar"}>
             {isVisible ? 'X' : '👤'}
           </button>
