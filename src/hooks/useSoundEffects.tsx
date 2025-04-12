@@ -37,61 +37,64 @@ export const useSoundEffects = () => {
     // Create sound objects
     const sounds: SoundElements = {
       // Basic UI sounds
-      click: new Howl({ src: ['/sounds/click.mp3'], volume: 0.4 }),
-      hover: new Howl({ src: ['/sounds/hover.mp3'], volume: 0.2 }),
-      whoosh: new Howl({ src: ['/sounds/whoosh.mp3'], volume: 0.5 }),
-      transition: new Howl({ src: ['/sounds/transition.mp3'], volume: 0.5 }),
-      notification: new Howl({ src: ['/sounds/notification.mp3'], volume: 0.4 }),
-      success: new Howl({ src: ['/sounds/success.mp3'], volume: 0.5 }),
-      error: new Howl({ src: ['/sounds/error.mp3'], volume: 0.5 }),
-      
+      click: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'], volume: 0.7 }),
+      hover: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/1127/1127-preview.mp3'], volume: 0.5 }),
+      whoosh: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/1489/1489-preview.mp3'], volume: 0.5 }),
+      transition: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3'], volume: 0.5 }),
+      notification: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3'], volume: 0.4 }),
+      success: new Howl({ src: ['https://assets.mixkit.co/active_storage/sfx/2852/2852-preview.mp3'], volume: 0.5 }),
+      error: new Howl({ src: ['/sounds/ui/error.mp3'], volume: 0.5 }),
+
       // Comic-specific sounds
-      pageFlip: new Howl({ src: ['/sounds/page-flip.mp3'], volume: 0.6 }),
-      popIn: new Howl({ src: ['/sounds/pop-in.mp3'], volume: 0.4 }),
-      speechBubble: new Howl({ src: ['/sounds/speech-bubble.mp3'], volume: 0.3 }),
-      typewriter: new Howl({ src: ['/sounds/typewriter.mp3'], volume: 0.3, rate: 1.5 }),
-      muffledVoice: new Howl({ src: ['/sounds/muffled-voice.mp3'], volume: 0.4 }),
-      
+      pageFlip: new Howl({ src: ['/sounds/comic/page-flip.mp3'], volume: 0.6 }),
+      popIn: new Howl({ src: ['/sounds/comic/pop-in.mp3'], volume: 0.4 }),
+      speechBubble: new Howl({ src: ['/sounds/comic/speech-bubble.mp3'], volume: 0.3 }),
+      typewriter: new Howl({ src: ['/sounds/comic/typewriter.mp3'], volume: 0.3, rate: 1.5 }),
+      muffledVoice: new Howl({ src: ['/sounds/comic/muffled-voice.mp3'], volume: 0.4 }),
+
       // Hero/Power sounds
-      heroEntrance: new Howl({ src: ['/sounds/hero-entrance.mp3'], volume: 0.5 }),
-      electricZap: new Howl({ src: ['/sounds/electric-zap.mp3'], volume: 0.4 }),
-      energyCharge: new Howl({ src: ['/sounds/energy-charge.mp3'], volume: 0.5 }),
-      
+      heroEntrance: new Howl({ src: ['/sounds/hero/entrance.mp3'], volume: 0.5 }),
+      electricZap: new Howl({ src: ['/sounds/hero/electric-zap.mp3'], volume: 0.4 }),
+      energyCharge: new Howl({ src: ['/sounds/hero/energy-charge.mp3'], volume: 0.5 }),
+
       // Coding sounds
-      keyboardTyping: new Howl({ src: ['/sounds/keyboard-typing.mp3'], volume: 0.3, sprite: { typing: [0, 2000] } }),
-      terminalBeep: new Howl({ src: ['/sounds/terminal-beep.mp3'], volume: 0.4 }),
-      glitchEffect: new Howl({ src: ['/sounds/glitch-effect.mp3'], volume: 0.5 }),
-      
+      keyboardTyping: new Howl({ 
+        src: ['/sounds/coding/keyboard-typing.mp3'], 
+        volume: 0.3, 
+        sprite: { typing: [0, 2000] } 
+      }),
+      terminalBeep: new Howl({ src: ['/sounds/coding/terminal-beep.mp3'], volume: 0.4 }),
+      glitchEffect: new Howl({ src: ['/sounds/coding/glitch-effect.mp3'], volume: 0.5 }),
+
       // Game mechanics
-      levelUp: new Howl({ src: ['/sounds/level-up.mp3'], volume: 0.6 }),
-      achievementUnlock: new Howl({ src: ['/sounds/achievement-unlock.mp3'], volume: 0.5 }),
-      
+      levelUp: new Howl({ src: ['/sounds/game/level-up.mp3'], volume: 0.6 }),
+      achievementUnlock: new Howl({ src: ['/sounds/game/achievement-unlock.mp3'], volume: 0.5 }),
+
       // AI sounds
-      neuralTone: new Howl({ src: ['/sounds/neural-tone.mp3'], volume: 0.3 }),
-      robotBeep: new Howl({ src: ['/sounds/robot-beep.mp3'], volume: 0.4 }),
-      voiceAssistant: new Howl({ src: ['/sounds/voice-assistant.mp3'], volume: 0.5 }),
-      
+      neuralTone: new Howl({ src: ['/sounds/ai/neural-tone.mp3'], volume: 0.3 }),
+      robotBeep: new Howl({ src: ['/sounds/ai/robot-beep.mp3'], volume: 0.4 }),
+      voiceAssistant: new Howl({ src: ['/sounds/ai/voice-assistant.mp3'], volume: 0.5 }),
+
       // Mystery sounds
-      footsteps: new Howl({ src: ['/sounds/footsteps.mp3'], volume: 0.3 }),
-      magnifyingGlass: new Howl({ src: ['/sounds/magnifying-glass.mp3'], volume: 0.4 }),
-      suspenseMusic: new Howl({ src: ['/sounds/suspense-music.mp3'], volume: 0.3, loop: true }),
-      
+      footsteps: new Howl({ src: ['/sounds/mystery/footsteps.mp3'], volume: 0.3 }),
+      magnifyingGlass: new Howl({ src: ['/sounds/mystery/magnifying-glass.mp3'], volume: 0.4 }),
+      suspenseMusic: new Howl({ src: ['/sounds/mystery/suspense-music.mp3'], volume: 0.3, loop: true }),
+
       // Magic sounds
-      spellCast: new Howl({ src: ['/sounds/spell-cast.mp3'], volume: 0.5 }),
-      twinkle: new Howl({ src: ['/sounds/twinkle.mp3'], volume: 0.4 }),
-      teleport: new Howl({ src: ['/sounds/teleport.mp3'], volume: 0.5 }),
-      
+      spellCast: new Howl({ src: ['/sounds/magic/spell-cast.mp3'], volume: 0.5 }),
+      twinkle: new Howl({ src: ['/sounds/magic/twinkle.mp3'], volume: 0.4 }),
+      teleport: new Howl({ src: ['/sounds/magic/teleport.mp3'], volume: 0.5 }),
+
       // Environmental sounds
-      cafeAmbience: new Howl({ src: ['/sounds/cafe-ambience.mp3'], volume: 0.2, loop: true }),
-      serverRoom: new Howl({ src: ['/sounds/server-room.mp3'], volume: 0.2, loop: true }),
-      rain: new Howl({ src: ['/sounds/rain.mp3'], volume: 0.2, loop: true }),
-      
+      cafeAmbience: new Howl({ src: ['/sounds/environment/cafe-ambience.mp3'], volume: 0.2, loop: true }),
+      serverRoom: new Howl({ src: ['/sounds/environment/server-room.mp3'], volume: 0.2, loop: true }),
+      rain: new Howl({ src: ['/sounds/environment/rain.mp3'], volume: 0.2, loop: true }),
+
       // Background music
-      eightBitMusic: new Howl({ src: ['/sounds/8bit-music.mp3'], volume: 0.3, loop: true }),
-      lofiBeats: new Howl({ src: ['/sounds/lofi-beats.mp3'], volume: 0.3, loop: true }),
-      highEnergySynth: new Howl({ src: ['/sounds/high-energy-synth.mp3'], volume: 0.3, loop: true })
-    };
-    
+      eightBitMusic: new Howl({ src: ['/sounds/music/eight-bit-music.mp3'], volume: 0.3, loop: true }),
+      lofiBeats: new Howl({ src: ['/sounds/music/lofi-beats.mp3'], volume: 0.3, loop: true }),
+      highEnergySynth: new Howl({ src: ['/sounds/music/high-energy-synth.mp3'], volume: 0.3, loop: true })
+    }
     // Set up load events
     let loadedCount = 0;
     const totalSounds = Object.keys(sounds).length;

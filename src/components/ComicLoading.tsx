@@ -8,11 +8,10 @@ interface ComicLoadingProps {
 }
 
 const ComicLoading = ({ message = "Loading..." }: ComicLoadingProps) => {
-  const { playSound } = useSound();
-  
+ 
   useEffect(() => {
     // Play page flip sound when component mounts
-    playSound('pageFlip');
+ 
   }, []);
 
   return (
@@ -74,7 +73,7 @@ const ComicLoading = ({ message = "Loading..." }: ComicLoadingProps) => {
         </motion.p>
       </div>
 
-      <style jsx>{`
+      <style >{`jsx
         .perspective-1000 {
           perspective: 1000px;
         }

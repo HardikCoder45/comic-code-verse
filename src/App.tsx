@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +12,7 @@ import ComicLoading from "./components/ComicLoading";
 import ChatBot from "./components/ChatBot";
 import VoiceControl from "./components/VoiceControl";
 import PageSlider from "./components/PageSlider";
+import BookLayout from "./components/BookLayout";
 
 // Providers
 import { SoundProvider } from "./contexts/SoundContext";
@@ -44,24 +44,26 @@ const App = () => {
         <SoundProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Landing />} />
+              <Route path="/" element={<BookLayout isLandingPage={true}><Landing /></BookLayout>} />
               <Route path="*" element={
                 <div className="min-h-screen w-full flex relative">
                   <Suspense fallback={<ComicLoading message="Loading..." />}>
-                    <main className="flex-1 ml-0">
-                      <Routes>
-                        <Route path="/home" element={<Home />} />
-                        <Route path="/projects" element={<Projects />} />
-                        <Route path="/about" element={<About />} />
-                        <Route path="/skills" element={<Skills />} />
-                        <Route path="/timeline" element={<TimeTravel />} />
-                        <Route path="/code-samples" element={<CodeSandboxes />} />
-                        <Route path="/dna" element={<CodeDNA />} />
-                        <Route path="/game" element={<PortfolioGame />} />
-                        <Route path="/resume" element={<ResumeBuilder />} />
-                        <Route path="/contact" element={<Contact />} />
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
+                    <main className="flex-1 ml-0 w-full">
+                      <BookLayout>
+                        <Routes>
+                          <Route path="/home" element={<Home />} />
+                          <Route path="/projects" element={<Projects />} />
+                          <Route path="/about" element={<About />} />
+                          <Route path="/skills" element={<Skills />} />
+                          <Route path="/timeline" element={<TimeTravel />} />
+                          <Route path="/code-samples" element={<CodeSandboxes />} />
+                          <Route path="/dna" element={<CodeDNA />} />
+                          <Route path="/game" element={<PortfolioGame />} />
+                          <Route path="/resume" element={<ResumeBuilder />} />
+                          <Route path="/contact" element={<Contact />} />
+                          <Route path="*" element={<NotFound />} />
+                        </Routes>
+                      </BookLayout>
                     </main>
                   </Suspense>
                   <ComicStripNavigation />

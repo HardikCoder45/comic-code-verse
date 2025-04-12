@@ -227,7 +227,7 @@ const VoiceControl = () => {
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: The custom elements are not rendering correctly. Please continue appending to this one.0.9 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
             className="mb-2"
           >
             <SpeechBubble type="speech" color="pink" position="left" className="max-w-xs">

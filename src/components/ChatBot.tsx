@@ -2,10 +2,16 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Send, ChevronDown, ChevronUp, Smile } from 'lucide-react';
 import SpeechBubble from './SpeechBubble';
+import { useSoundEffects } from '../hooks/useSoundEffects';
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
+ 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
+
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -16,6 +22,8 @@ const ChatBot = () => {
   }]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { playSound } = useSoundEffects();
+  
   const toggleChat = () => {
     setIsOpen(!isOpen);
     if (!isOpen) {
@@ -73,6 +81,8 @@ const ChatBot = () => {
           content: data.choices[0].message.content
         };
         setMessages(prev => [...prev, botResponse]);
+        // Play notification sound when message arrives
+        playSound('notification');
       } else {
         throw new Error('No response from API');
       }
@@ -82,6 +92,8 @@ const ChatBot = () => {
         role: 'assistant',
         content: "Sorry, I had trouble connecting. Please try again later! 😅"
       }]);
+      // Play notification sound for error message too
+      playSound('notification');
     } finally {
       setIsLoading(false);
     }
@@ -141,7 +153,31 @@ const ChatBot = () => {
                         {msg.role === 'user' ? <div className="inline-block bg-comic-orange text-white p-2 rounded-lg max-w-[80%] break-words">
                             <p className="font-comic">{msg.content}</p>
                           </div> : <SpeechBubble type="speech" color="blue" position="left" className="inline-block max-w-[80%]">
-                            <p className="font-comic text-sm text-black">{msg.content}</p>
+                            <div className="font-comic text-sm text-black markdown-content">
+                              <ReactMarkdown
+                                components={{
+                                  code({node, inline, className, children, ...props}) {
+                                    const match = /language-(\w+)/.exec(className || '');
+                                    return !inline && match ? (
+                                      <SyntaxHighlighter
+                                        style={tomorrow}
+                                        language={match[1]}
+                                        PreTag="div"
+                                        {...props}
+                                      >
+                                        {String(children).replace(/\n$/, '')}
+                                      </SyntaxHighlighter>
+                                    ) : (
+                                      <code className={className} {...props}>
+                                        {children}
+                                      </code>
+                                    );
+                                  }
+                                }}
+                              >
+                                {msg.content}
+                              </ReactMarkdown>
+                            </div>
                           </SpeechBubble>}
                       </div>)}
                     {isLoading && <div className="mb-3">
