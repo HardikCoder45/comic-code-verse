@@ -38,7 +38,7 @@ const SoundContext = createContext<SoundContextType | undefined>(undefined);
 
 export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const soundEffects = useSoundEffects();
-  const [volumeLevel, setVolumeLevel] = useState(soundEffects.volumeLevel || 1);
+  const [volumeLevel, setVolumeLevel] = useState(1);
   
   // Use the values from the hook but add our own state for volume if it's not provided
   const contextValue: SoundContextType = {

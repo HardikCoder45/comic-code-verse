@@ -24,366 +24,96 @@ interface AIPortfolioResponse {
   error?: string;
 }
 
+// Groq API key - in production this should be stored securely
+const GROQ_API_KEY = "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";
+const GROQ_MODEL = "meta-llama/llama-4-maverick-17b-128e-instruct";
+
 export const generatePortfolioHTML = async (promptData: PortfolioData, customPrompt?: string): Promise<string> => {
   try {
-    // Simulate API call with a timeout
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    // Display loading toast
+    toast.loading("Generating portfolio with AI...");
     
-    // Create HTML based on the prompt data
-    const html = generateHTMLFromData(promptData, customPrompt);
+    // Create structured data for the prompt
+    const structuredData = JSON.stringify(promptData, null, 2);
     
-    return html;
+    // Create the prompt for the AI
+    let prompt = `Generate a professional, responsive HTML portfolio page with the following information:
+    
+${structuredData}
+
+The HTML should:
+1. Be a single, complete HTML file with inline CSS
+2. Use a clean, modern design in light mode
+3. Be fully responsive for mobile, tablet, and desktop
+4. Include sections for: intro, about me, skills, projects, and contact
+5. Use appropriate icons for social links
+6. Implement subtle animations and hover effects
+7. Include SEO meta tags
+8. Use semantic HTML5
+9. Include FontAwesome or similar for icons
+10. Have a color scheme based on the theme: ${promptData.theme}
+11. Use the layout style: ${promptData.layout}
+12. Be ready to use without any additional files or dependencies
+13. Include proper spacing, typography, and visual hierarchy
+14. Return ONLY the HTML code without any explanation or markdown formatting
+
+The code should be modern, valid HTML5, and follow best practices.`;
+
+    // Add custom prompt if provided
+    if (customPrompt && customPrompt.trim().length > 0) {
+      prompt += `\n\nAdditional instructions: ${customPrompt}`;
+    }
+
+    // Call the Groq API
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${GROQ_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        messages: [
+          {
+            role: "system",
+            content: "You are an expert HTML and CSS developer. You create beautiful, responsive portfolio websites from user specifications. Your responses should contain ONLY the complete HTML code without any explanations or markdown formatting."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 4000
+      })
+    });
+
+    // Check if the request was successful
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Groq API error:", errorData);
+      toast.dismiss();
+      toast.error("Failed to generate portfolio with AI. Please try again.");
+      return generateFallbackHTML(promptData);
+    }
+
+    // Parse the response
+    const data = await response.json();
+    const generatedHtml = data.choices[0].message.content.trim();
+    
+    // Clean up the response if it contains markdown code blocks
+    const cleanedHtml = generatedHtml.replace(/```html|```/g, "").trim();
+    
+    toast.dismiss();
+    toast.success("Portfolio generated successfully!");
+    
+    return cleanedHtml;
   } catch (error) {
     console.error('Error generating portfolio:', error);
+    toast.dismiss();
     toast.error('Failed to generate portfolio. Please try again.');
     return generateFallbackHTML(promptData);
   }
-};
-
-// This function generates HTML based on the portfolio data
-const generateHTMLFromData = (data: PortfolioData, customPrompt?: string): string => {
-  // Get primary and secondary colors based on theme
-  const colors = getThemeColors(data.theme);
-  
-  // Determine the layout style
-  const layoutClass = data.layout === 'modern' ? 'modern-layout' : 
-                      data.layout === 'creative' ? 'creative-layout' : 'classic-layout';
-  
-  // Generate skills HTML if there are skills
-  const skillsHTML = data.skills.length > 0 ? `
-    <section id="skills" class="skills-section">
-      <h2>Skills</h2>
-      <div class="skills-container">
-        ${data.skills.map((skill) => `
-          <div class="skill-item" style="background-color: ${colors.primaryLight}; color: ${colors.primaryDark};">
-            <span>${skill.name}</span>
-            <div class="skill-level">
-              ${Array(skill.level).fill('★').join('')}${Array(5 - skill.level).fill('☆').join('')}
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </section>
-  ` : '';
-
-  // Generate projects HTML if there are projects
-  const projectsHTML = data.projects.length > 0 ? `
-    <section id="projects" class="projects-section">
-      <h2>Projects</h2>
-      <div class="projects-grid">
-        ${data.projects.map((project) => `
-          <div class="project-card">
-            ${project.image ? `<img src="${project.image}" alt="${project.title}" class="project-image">` : ''}
-            <h3>${project.title}</h3>
-            <p>${project.description}</p>
-            <div class="project-tags">
-              ${project.tags.map((tag: string) => `<span class="tag">${tag}</span>`).join('')}
-            </div>
-            ${project.link ? `<a href="${project.link}" class="project-link">View Project</a>` : ''}
-          </div>
-        `).join('')}
-      </div>
-    </section>
-  ` : '';
-
-  // Generate social links HTML if any are provided
-  const socialLinksHTML = Object.values(data.socialLinks).some(link => link) ? `
-    <div class="social-links">
-      ${data.socialLinks.github ? `<a href="${data.socialLinks.github}" class="social-link"><i class="fab fa-github"></i></a>` : ''}
-      ${data.socialLinks.linkedin ? `<a href="${data.socialLinks.linkedin}" class="social-link"><i class="fab fa-linkedin"></i></a>` : ''}
-      ${data.socialLinks.twitter ? `<a href="${data.socialLinks.twitter}" class="social-link"><i class="fab fa-twitter"></i></a>` : ''}
-      ${data.socialLinks.website ? `<a href="${data.socialLinks.website}" class="social-link"><i class="fas fa-globe"></i></a>` : ''}
-      ${data.socialLinks.email ? `<a href="mailto:${data.socialLinks.email}" class="social-link"><i class="fas fa-envelope"></i></a>` : ''}
-    </div>
-  ` : '';
-
-  // Generate the complete HTML
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${data.name} | ${data.title}</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    :root {
-      --primary-color: ${colors.primary};
-      --secondary-color: ${colors.secondary};
-      --primary-light: ${colors.primaryLight};
-      --primary-dark: ${colors.primaryDark};
-      --text-color: #333;
-      --background-color: #f9f9f9;
-      --card-bg-color: #ffffff;
-      --border-radius: 8px;
-      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      --transition: all 0.3s ease;
-    }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
-    body {
-      background-color: var(--background-color);
-      color: var(--text-color);
-      line-height: 1.6;
-    }
-    
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-    
-    header {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 2rem 0;
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    
-    .profile {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-    }
-    
-    .profile-image {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid white;
-      box-shadow: var(--box-shadow);
-    }
-    
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-    }
-    
-    h2 {
-      color: var(--primary-color);
-      margin-bottom: 1.5rem;
-      position: relative;
-      display: inline-block;
-    }
-    
-    h2:after {
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background-color: var(--primary-color);
-    }
-    
-    p {
-      margin-bottom: 1rem;
-    }
-    
-    section {
-      margin-bottom: 3rem;
-      padding: 2rem;
-      background-color: var(--card-bg-color);
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-    }
-    
-    .bio-section {
-      text-align: center;
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    
-    .skills-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-    }
-    
-    .skill-item {
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-weight: 500;
-    }
-    
-    .skill-level {
-      font-size: 0.8rem;
-      color: var(--primary-dark);
-    }
-    
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 2rem;
-    }
-    
-    .project-card {
-      border-radius: var(--border-radius);
-      overflow: hidden;
-      box-shadow: var(--box-shadow);
-      transition: var(--transition);
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .project-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-    }
-    
-    .project-image {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-    }
-    
-    .project-card h3 {
-      padding: 1rem 1rem 0.5rem;
-      color: var(--primary-color);
-    }
-    
-    .project-card p {
-      padding: 0 1rem;
-      flex-grow: 1;
-    }
-    
-    .project-tags {
-      padding: 0 1rem 1rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    
-    .tag {
-      padding: 0.2rem 0.6rem;
-      background-color: var(--primary-light);
-      color: var(--primary-dark);
-      border-radius: 20px;
-      font-size: 0.8rem;
-    }
-    
-    .project-link {
-      display: inline-block;
-      margin: 1rem;
-      padding: 0.5rem 1rem;
-      background-color: var(--primary-color);
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-      transition: var(--transition);
-    }
-    
-    .project-link:hover {
-      background-color: var(--primary-dark);
-    }
-    
-    .social-links {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-top: 1.5rem;
-    }
-    
-    .social-link {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      background-color: var(--primary-color);
-      color: white;
-      border-radius: 50%;
-      text-decoration: none;
-      transition: var(--transition);
-    }
-    
-    .social-link:hover {
-      background-color: var(--primary-dark);
-      transform: translateY(-3px);
-    }
-    
-    footer {
-      text-align: center;
-      padding: 2rem;
-      background-color: var(--primary-color);
-      color: white;
-      margin-top: 2rem;
-    }
-    
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .projects-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-    
-    /* Layout-specific styles */
-    .modern-layout section {
-      border-radius: 12px;
-    }
-    
-    .creative-layout section {
-      border-radius: 0;
-      border-left: 5px solid var(--primary-color);
-    }
-    
-    .classic-layout h2 {
-      text-align: center;
-    }
-    
-    .classic-layout h2:after {
-      left: 50%;
-      transform: translateX(-50%);
-    }
-  </style>
-</head>
-<body class="${layoutClass}">
-  <header>
-    <div class="container">
-      <div class="profile">
-        ${data.profileImage ? 
-          `<img src="${data.profileImage}" alt="${data.name}" class="profile-image">` : 
-          `<div class="profile-image" style="background-color: ${colors.secondary}; display: flex; align-items: center; justify-content: center; font-size: 3rem;">${data.name[0]}</div>`
-        }
-        <h1>${data.name}</h1>
-        <p>${data.title}</p>
-        ${socialLinksHTML}
-      </div>
-    </div>
-  </header>
-  
-  <main class="container">
-    <section class="bio-section">
-      <h2>About Me</h2>
-      <p>${data.bio || 'Professional with a passion for creating amazing experiences.'}</p>
-    </section>
-    
-    ${skillsHTML}
-    
-    ${projectsHTML}
-  </main>
-  
-  <footer>
-    <div class="container">
-      <p>&copy; ${new Date().getFullYear()} ${data.name}. All rights reserved.</p>
-    </div>
-  </footer>
-</body>
-</html>`;
 };
 
 // Fallback HTML in case of errors
