@@ -37,13 +37,25 @@ interface SoundContextType {
 const SoundContext = createContext<SoundContextType | undefined>(undefined);
 
 export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isMuted, isLoaded, toggleMute, playSound, stopSound, volumeLevel, setVolumeLevel } = useSoundEffects();
+  const soundEffects = useSoundEffects();
+  const [volumeLevel, setVolumeLevel] = useState(soundEffects.volumeLevel || 1);
+  
+  // Use the values from the hook but add our own state for volume if it's not provided
+  const contextValue: SoundContextType = {
+    isMuted: soundEffects.isMuted,
+    isLoaded: soundEffects.isLoaded,
+    toggleMute: soundEffects.toggleMute,
+    playSound: soundEffects.playSound,
+    stopSound: soundEffects.stopSound,
+    volumeLevel: volumeLevel,
+    setVolumeLevel: (level: number) => setVolumeLevel(level)
+  };
   
   // Listen for key press to toggle mute
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'm' && (e.ctrlKey || e.metaKey)) {
-        toggleMute();
+        contextValue.toggleMute();
       }
     };
     
@@ -54,8 +66,8 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const interactiveElements = document.querySelectorAll('button, a, [role="button"], input, select, .interactive');
       
       interactiveElements.forEach(element => {
-        element.addEventListener('mouseenter', () => playSound('hover'));
-        element.addEventListener('click', () => playSound('click'));
+        element.addEventListener('mouseenter', () => contextValue.playSound('hover'));
+        element.addEventListener('click', () => contextValue.playSound('click'));
       });
     };
     
@@ -69,18 +81,10 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       window.removeEventListener('keydown', handleKeyDown);
       clearInterval(interval);
     };
-  }, [toggleMute, playSound]);
+  }, [contextValue.toggleMute, contextValue.playSound]);
   
   return (
-    <SoundContext.Provider value={{ 
-      isMuted, 
-      isLoaded, 
-      toggleMute, 
-      playSound, 
-      stopSound,
-      volumeLevel,
-      setVolumeLevel
-    }}>
+    <SoundContext.Provider value={contextValue}>
       {children}
     </SoundContext.Provider>
   );

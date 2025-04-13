@@ -1,17 +1,17 @@
 
 import React from 'react';
-import { ViewIcon, LayoutGrid, Layers, BookOpen } from 'lucide-react';
+import { ViewIcon, LayoutGrid, Layers, BookOpen, Code } from 'lucide-react';
 import { useSound } from '../contexts/SoundContext';
 
 interface ProjectViewSwitcherProps {
-  currentView: 'grid' | 'carousel' | 'book';
-  setCurrentView: (view: 'grid' | 'carousel' | 'book') => void;
+  currentView: 'grid' | 'carousel' | 'book' | 'code';
+  setCurrentView: (view: 'grid' | 'carousel' | 'book' | 'code') => void;
 }
 
 const ProjectViewSwitcher: React.FC<ProjectViewSwitcherProps> = ({ currentView, setCurrentView }) => {
   const { playSound } = useSound();
   
-  const handleViewChange = (view: 'grid' | 'carousel' | 'book') => {
+  const handleViewChange = (view: 'grid' | 'carousel' | 'book' | 'code') => {
     setCurrentView(view);
     playSound('click');
     setTimeout(() => playSound('transition'), 100);
@@ -54,6 +54,18 @@ const ProjectViewSwitcher: React.FC<ProjectViewSwitcherProps> = ({ currentView, 
       >
         <BookOpen size={16} />
         <span>Comic Book</span>
+      </button>
+      <button 
+        className={`p-2 border-2 rounded-lg flex items-center gap-2 ${
+          currentView === 'code' 
+            ? 'bg-blue-500 text-white' 
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors'
+        }`}
+        onClick={() => handleViewChange('code')}
+        onMouseEnter={() => playSound('hover')}
+      >
+        <Code size={16} />
+        <span>HTML Code</span>
       </button>
     </div>
   );
