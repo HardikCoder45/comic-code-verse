@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SpeechBubble from './SpeechBubble';
-import { useSoundEffects } from '../hooks/useSoundEffects';
+import { useSound } from '../contexts/SoundContext';
 
 interface Command {
   keywords: string[];
@@ -22,7 +22,7 @@ const VoiceControl = () => {
   const [showHelp, setShowHelp] = useState(false);
   const timeoutRef = useRef<number | null>(null);
   const navigate = useNavigate();
-  const { playSound } = useSoundEffects();
+  const { playSound } = useSound();
   
   // Define commands
   const commands: Command[] = [

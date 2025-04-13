@@ -1,7 +1,8 @@
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useSoundEffects } from '../hooks/useSoundEffects';
 
-type SoundType = 
+export type SoundType = 
   // Basic UI sounds
   'click' | 'hover' | 'whoosh' | 'transition' | 'notification' | 'success' | 'error' |
   // Comic-specific sounds
