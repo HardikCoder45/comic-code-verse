@@ -2,10 +2,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, HelpCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SpeechBubble from './SpeechBubble';
 import { useSound } from '../contexts/SoundContext';
+import { Badge } from '@/components/ui/badge';
 
 interface Command {
   keywords: string[];
@@ -22,7 +23,7 @@ const VoiceControl = () => {
   const [showHelp, setShowHelp] = useState(false);
   const timeoutRef = useRef<number | null>(null);
   const navigate = useNavigate();
-  const { playSound } = useSound();
+  const { playSound, isMuted, toggleMute } = useSound();
   
   // Define commands
   const commands: Command[] = [
@@ -62,9 +63,9 @@ const VoiceControl = () => {
       description: 'Navigate to the Portfolio Game'
     },
     { 
-      keywords: ['go to resume', 'navigate to resume', 'show resume', 'show your resume'], 
-      action: () => navigate('/resume'),
-      description: 'Navigate to the Resume Builder'
+      keywords: ['go to portfolio', 'navigate to portfolio', 'create portfolio', 'custom portfolio'], 
+      action: () => navigate('/custom-portfolio'),
+      description: 'Navigate to the Portfolio Creator'
     },
     { 
       keywords: ['go to dna', 'navigate to dna', 'show dna', 'show code dna'], 
@@ -75,6 +76,20 @@ const VoiceControl = () => {
       keywords: ['go to contact', 'navigate to contact', 'show contact', 'how to contact you'], 
       action: () => navigate('/contact'),
       description: 'Navigate to the Contact page'
+    },
+    { 
+      keywords: ['mute sounds', 'turn off sounds', 'disable sounds'], 
+      action: () => {
+        if (!isMuted) toggleMute();
+      },
+      description: 'Mute all sounds'
+    },
+    { 
+      keywords: ['unmute sounds', 'turn on sounds', 'enable sounds'], 
+      action: () => {
+        if (isMuted) toggleMute();
+      },
+      description: 'Unmute all sounds'
     },
     { 
       keywords: ['show help', 'what can I say', 'voice commands', 'available commands'], 
@@ -155,7 +170,7 @@ const VoiceControl = () => {
         window.clearTimeout(timeoutRef.current);
       }
     };
-  }, []);
+  }, [playSound]);
 
   const toggleListening = () => {
     if (!recognition) return;
@@ -187,19 +202,51 @@ const VoiceControl = () => {
   }
 
   return (
-    <div className="fixed bottom-24 right-6 z-50 flex flex-col items-end gap-4">
+    <div className="fixed top-4 right-6 z-50 flex flex-col items-end gap-4">
+      <div className="flex items-center space-x-3 bg-white rounded-full px-4 py-2 shadow-lg border border-gray-200">
+        <Button
+          variant="ghost"
+          size="sm"
+          className={`text-gray-700 hover:text-blue-600 hover:bg-blue-50`}
+          onClick={() => setShowHelp(!showHelp)}
+          onMouseEnter={() => playSound('hover')}
+        >
+          {showHelp ? <X size={18} /> : <HelpCircle size={18} />}
+        </Button>
+        
+        <Button
+          variant="ghost"
+          size="sm"
+          className={`text-gray-700 hover:text-blue-600 hover:bg-blue-50`}
+          onClick={toggleMute}
+          onMouseEnter={() => playSound('hover')}
+        >
+          {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+        </Button>
+        
+        <Badge 
+          variant={isListening ? "default" : "outline"}
+          className={`${isListening ? 'bg-blue-500 hover:bg-blue-600' : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'} cursor-pointer px-3`}
+          onClick={toggleListening}
+          onMouseEnter={() => playSound('hover')}
+        >
+          {isListening ? <Mic size={16} className="mr-1" /> : <MicOff size={16} className="mr-1" />}
+          {isListening ? 'Listening...' : 'Voice Control'}
+        </Badge>
+      </div>
+      
       <AnimatePresence>
         {showHelp && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="mb-4"
+            className="mb-4 w-80"
           >
-            <SpeechBubble type="speech" color="purple" position="left" className="max-w-xs">
-              <h3 className="font-bangers text-lg mb-2">Voice Commands</h3>
+            <SpeechBubble type="speech" color="blue" position="left" className="max-w-full">
+              <h3 className="font-bangers text-lg mb-2 text-gray-800">Voice Commands</h3>
               <div className="max-h-60 overflow-y-auto text-sm">
-                <ul className="space-y-1">
+                <ul className="space-y-1 text-gray-700">
                   {commands.map((command, index) => (
                     <li key={index} className="flex items-start">
                       <span className="font-bold mr-1">•</span>
@@ -212,8 +259,12 @@ const VoiceControl = () => {
                 </ul>
               </div>
               <button 
-                className="mt-2 text-xs font-bold text-purple-700 hover:underline"
-                onClick={() => setShowHelp(false)}
+                className="mt-2 text-xs font-bold text-blue-600 hover:underline"
+                onClick={() => {
+                  setShowHelp(false);
+                  playSound('click');
+                }}
+                onMouseEnter={() => playSound('hover')}
               >
                 Close Help
               </button>
@@ -230,38 +281,12 @@ const VoiceControl = () => {
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             className="mb-2"
           >
-            <SpeechBubble type="speech" color="pink" position="left" className="max-w-xs">
-              <p className="font-comic text-sm italic">"{transcript}"</p>
+            <SpeechBubble type="speech" color="blue" position="left" className="max-w-xs">
+              <p className="font-comic text-sm italic text-gray-800">"{transcript}"</p>
             </SpeechBubble>
           </motion.div>
         )}
       </AnimatePresence>
-      
-      <div className="flex gap-2">
-        <Button
-          variant="outline"
-          size="icon"
-          className={`h-12 w-12 rounded-full shadow-lg transition-colors ${
-            showHelp ? 'bg-purple-500 text-white' : 'bg-white backdrop-blur-sm'
-          }`}
-          onClick={() => setShowHelp(!showHelp)}
-          onMouseEnter={() => playSound('hover')}
-        >
-          {showHelp ? <VolumeX size={24} /> : <Volume2 size={24} />}
-        </Button>
-        
-        <Button
-          variant="outline"
-          size="icon"
-          className={`h-12 w-12 rounded-full shadow-lg transition-colors ${
-            isListening ? 'bg-purple-500 text-white border-purple-500' : 'bg-white backdrop-blur-sm'
-          }`}
-          onClick={toggleListening}
-          onMouseEnter={() => playSound('hover')}
-        >
-          {isListening ? <Mic size={24} /> : <MicOff size={24} />}
-        </Button>
-      </div>
     </div>
   );
 };

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import SpeechBubble from './SpeechBubble';
-import { Home, BookOpen, User, Image, MessageSquare, Calendar, Gamepad, FileText, Dna, Code } from 'lucide-react';
+import { Home, BookOpen, User, Image, MessageSquare, Calendar, Gamepad, Palette, Dna, Code } from 'lucide-react';
 import { useSound } from '../contexts/SoundContext';
 
 const ComicStripNavigation = () => {
@@ -12,16 +12,16 @@ const ComicStripNavigation = () => {
   const { playSound } = useSound();
   
   const navItems = [
-    { path: '/home', label: 'Home', icon: Home, color: 'bg-comic-blue' },
-    { path: '/projects', label: 'Projects', icon: BookOpen, color: 'bg-comic-pink' },
-    { path: '/about', label: 'About', icon: User, color: 'bg-comic-orange' },
-    { path: '/skills', label: 'Skills', icon: Image, color: 'bg-comic-green' },
-    { path: '/timeline', label: 'Timeline', icon: Calendar, color: 'bg-comic-purple' },
-    { path: '/code-samples', label: 'Code', icon: Code, color: 'bg-comic-green' },
-    { path: '/game', label: 'Game', icon: Gamepad, color: 'bg-comic-yellow' },
-    { path: '/resume', label: 'Resume', icon: FileText, color: 'bg-comic-blue' },
-    { path: '/dna', label: 'Code DNA', icon: Dna, color: 'bg-comic-pink' },
-    { path: '/contact', label: 'Contact', icon: MessageSquare, color: 'bg-comic-purple' }
+    { path: '/home', label: 'Home', icon: Home, color: 'bg-blue-500' },
+    { path: '/projects', label: 'Projects', icon: BookOpen, color: 'bg-pink-500' },
+    { path: '/about', label: 'About', icon: User, color: 'bg-orange-500' },
+    { path: '/skills', label: 'Skills', icon: Image, color: 'bg-green-500' },
+    { path: '/timeline', label: 'Timeline', icon: Calendar, color: 'bg-purple-500' },
+    { path: '/code-samples', label: 'Code', icon: Code, color: 'bg-teal-500' },
+    { path: '/game', label: 'Game', icon: Gamepad, color: 'bg-yellow-500' },
+    { path: '/custom-portfolio', label: 'Portfolio', icon: Palette, color: 'bg-blue-500' },
+    { path: '/dna', label: 'Code DNA', icon: Dna, color: 'bg-pink-500' },
+    { path: '/contact', label: 'Contact', icon: MessageSquare, color: 'bg-purple-500' }
   ];
 
   useEffect(() => {
@@ -31,12 +31,12 @@ const ComicStripNavigation = () => {
     };
     
     return unlisten;
-  }, [location.pathname]);
+  }, [location.pathname, playSound]);
 
   return (
     <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
       <motion.div 
-        className="bg-white border-4 border-black rounded-xl p-2 shadow-lg flex flex-wrap justify-center gap-2 max-w-4xl"
+        className="bg-white border-2 border-gray-300 rounded-xl p-2 shadow-lg flex flex-wrap justify-center gap-2 max-w-4xl"
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: "backOut" }}
@@ -49,7 +49,7 @@ const ComicStripNavigation = () => {
             <div key={item.path} className="relative">
               <Link 
                 to={item.path}
-                className={`block p-3 rounded-lg transition-all ${isActive ? item.color + ' text-white' : 'bg-gray-100 hover:bg-gray-200'}`}
+                className={`block p-3 rounded-lg transition-all ${isActive ? item.color + ' text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`}
                 onMouseEnter={() => {
                   setHoveredItem(item.path);
                   playSound('hover');
@@ -69,8 +69,8 @@ const ComicStripNavigation = () => {
                     className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap"
                     onAnimationStart={() => playSound('speechBubble')}
                   >
-                    <SpeechBubble type="speech" color="yellow" position="bottom" className="py-1 px-2">
-                      <span className="font-comic text-sm font-bold">{item.label}</span>
+                    <SpeechBubble type="speech" color="blue" position="bottom" className="py-1 px-2">
+                      <span className="font-comic text-sm font-bold text-gray-800">{item.label}</span>
                     </SpeechBubble>
                   </motion.div>
                 )}

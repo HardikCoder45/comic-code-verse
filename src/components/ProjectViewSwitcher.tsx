@@ -17,36 +17,39 @@ const ProjectViewSwitcher: React.FC<ProjectViewSwitcherProps> = ({ currentView, 
   };
   
   return (
-    <div className="flex gap-2 bg-gradient-to-r from-gray-800 to-gray-900 p-2 rounded-lg border-2 border-comic-border shadow-lg mb-6">
+    <div className="flex gap-2 bg-white p-2 rounded-lg border-2 border-gray-200 shadow-md mb-6">
       <button 
-        className={`p-2 border-2 border-comic-border rounded-lg flex items-center gap-2 ${
+        className={`p-2 border-2 rounded-lg flex items-center gap-2 ${
           currentView === 'grid' 
-            ? 'bg-comic-blue text-white' 
-            : 'bg-gray-800 text-white hover:bg-gray-700 transition-colors'
+            ? 'bg-blue-500 text-white' 
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors'
         }`}
         onClick={() => handleViewChange('grid')}
+        onMouseEnter={() => playSound('hover')}
       >
         <LayoutGrid size={16} />
         <span>Grid View</span>
       </button>
       <button 
-        className={`p-2 border-2 border-comic-border rounded-lg flex items-center gap-2 ${
+        className={`p-2 border-2 rounded-lg flex items-center gap-2 ${
           currentView === 'carousel' 
-            ? 'bg-comic-blue text-white' 
-            : 'bg-gray-800 text-white hover:bg-gray-700 transition-colors'
+            ? 'bg-blue-500 text-white' 
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors'
         }`}
         onClick={() => handleViewChange('carousel')}
+        onMouseEnter={() => playSound('hover')}
       >
         <Layers size={16} />
         <span>Carousel</span>
       </button>
       <button 
-        className={`p-2 border-2 border-comic-border rounded-lg flex items-center gap-2 ${
+        className={`p-2 border-2 rounded-lg flex items-center gap-2 ${
           currentView === 'book' 
-            ? 'bg-comic-blue text-white' 
-            : 'bg-gray-800 text-white hover:bg-gray-700 transition-colors'
+            ? 'bg-blue-500 text-white' 
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors'
         }`}
         onClick={() => handleViewChange('book')}
+        onMouseEnter={() => playSound('hover')}
       >
         <BookOpen size={16} />
         <span>Comic Book</span>

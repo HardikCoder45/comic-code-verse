@@ -1,13 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import SpeechBubble from '../components/SpeechBubble';
 import { projects } from '../data/projects';
 import { useSound } from '../contexts/SoundContext';
 
-// Import our new components
+// Import our components
 import ProjectCard from '../components/ProjectCard';
-import ProjectDetailsModal from '../components/ProjectDetailsModal';
 import ProjectFilter from '../components/ProjectFilter';
 import ProjectStats from '../components/ProjectStats';
 import ProjectViewSwitcher from '../components/ProjectViewSwitcher';
@@ -20,9 +20,8 @@ const Projects = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentView, setCurrentView] = useState<'grid' | 'carousel' | 'book'>('grid');
   const [animateIn, setAnimateIn] = useState(false);
-  const [showFeaturedProject, setShowFeaturedProject] = useState(false);
-  const [featuredProjectId, setFeaturedProjectId] = useState(1);
   const { playSound } = useSound();
+  const navigate = useNavigate();
   
   const categories = ['all', ...new Set(projects.flatMap(p => 
     p.skills.map(s => s.name.toLowerCase())
@@ -60,10 +59,9 @@ const Projects = () => {
     return () => clearTimeout(timer);
   }, [playSound]);
   
-  const handleShowFeaturedProject = (id: number) => {
-    setFeaturedProjectId(id);
-    setShowFeaturedProject(true);
-    playSound('popIn');
+  const handleShowProjectDetails = (id: number) => {
+    navigate(`/show-project/${id}`);
+    playSound('pageFlip');
   };
   
   const projectStats = {
@@ -75,7 +73,7 @@ const Projects = () => {
   };
 
   return (
-    <div className="min-h-screen w-full pl-20 py-6 px-4 md:px-8 bg-gradient-to-b from-gray-900 to-gray-800">
+    <div className="min-h-screen w-full py-6 px-4 md:px-8 bg-gradient-to-b from-blue-50 to-white">
       <div className="max-w-6xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, y: -30 }}
@@ -83,13 +81,13 @@ const Projects = () => {
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <h1 className="font-bangers text-5xl text-comic-yellow mb-4 text-center tracking-wider drop-shadow-glow">
+          <h1 className="font-bangers text-5xl text-blue-700 mb-4 text-center tracking-wider">
             Project Showcase
           </h1>
           
           <div className="max-w-3xl mx-auto mb-6">
-            <SpeechBubble type="shout" color="yellow">
-              <p className="font-comic text-lg text-white">Here's a collection of my coding adventures! Click on any panel to see the code behind it.</p>
+            <SpeechBubble type="shout" color="blue">
+              <p className="font-comic text-lg text-gray-800">Here's a collection of my coding adventures! Click on any panel to see the details.</p>
             </SpeechBubble>
           </div>
           
@@ -113,15 +111,6 @@ const Projects = () => {
           />
         </motion.div>
         
-        <AnimatePresence>
-          {showFeaturedProject && (
-            <ProjectDetailsModal
-              project={projects.find(p => p.id === featuredProjectId)!}
-              onClose={() => setShowFeaturedProject(false)}
-            />
-          )}
-        </AnimatePresence>
-        
         {currentView === 'grid' && (
           <LayoutGroup>
             <motion.div 
@@ -134,7 +123,7 @@ const Projects = () => {
                     key={project.id}
                     project={project}
                     index={index}
-                    onViewDetails={handleShowFeaturedProject}
+                    onViewDetails={handleShowProjectDetails}
                   />
                 ))}
               </AnimatePresence>
@@ -145,19 +134,19 @@ const Projects = () => {
         {currentView === 'carousel' && (
           <ProjectCarousel 
             projects={sortedProjects}
-            onViewDetails={handleShowFeaturedProject}
+            onViewDetails={handleShowProjectDetails}
           />
         )}
         
         {currentView === 'book' && (
           <ProjectBook 
             projects={sortedProjects}
-            onViewDetails={handleShowFeaturedProject}
+            onViewDetails={handleShowProjectDetails}
           />
         )}
         
         <motion.div 
-          className="mt-12 bg-gradient-to-r from-comic-blue to-comic-purple rounded-xl p-6 text-white shadow-lg shadow-purple-300/30"
+          className="mt-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl p-6 text-white shadow-lg"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.5 }}
@@ -169,10 +158,11 @@ const Projects = () => {
             </div>
             <motion.a 
               href="/contact" 
-              className="mt-4 md:mt-0 bg-white text-comic-blue font-bold px-6 py-3 rounded-lg hover:bg-white/90 transition-colors shadow-lg"
+              className="mt-4 md:mt-0 bg-white text-blue-600 font-bold px-6 py-3 rounded-lg hover:bg-blue-50 transition-colors shadow-lg"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => playSound('click')}
+              onMouseEnter={() => playSound('hover')}
             >
               Get in Touch
             </motion.a>

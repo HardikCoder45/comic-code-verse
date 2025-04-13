@@ -47,10 +47,27 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     window.addEventListener('keydown', handleKeyDown);
     
+    // Enhance interactions with sound effects
+    const addHoverSounds = () => {
+      const interactiveElements = document.querySelectorAll('button, a, [role="button"], input, select, .interactive');
+      
+      interactiveElements.forEach(element => {
+        element.addEventListener('mouseenter', () => playSound('hover'));
+        element.addEventListener('click', () => playSound('click'));
+      });
+    };
+    
+    // Add sound effects to new elements periodically
+    const interval = setInterval(addHoverSounds, 2000);
+    
+    // Initial addition
+    setTimeout(addHoverSounds, 1000);
+    
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      clearInterval(interval);
     };
-  }, [toggleMute]);
+  }, [toggleMute, playSound]);
   
   return (
     <SoundContext.Provider value={{ isMuted, isLoaded, toggleMute, playSound, stopSound }}>
