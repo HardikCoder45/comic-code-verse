@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { Gamepad, Medal, Star, Book, Code, Coffee, Heart, Zap, X, Shield, Cpu, Database, Globe, Award, Wrench, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Gamepad, Medal, Star, Book, Code, Coffee, Heart, Zap, X, Shield, Cpu, Database, Globe, Award, Wrench, AlertCircle, Brain, ArrowUp, Clock, ArrowRight, Lock, BookOpen } from 'lucide-react';
 import SpeechBubble from './SpeechBubble';
 import { toast } from 'sonner';
+import confetti from 'canvas-confetti';
 
 // Game objects and obstacles
 interface GameObject {
@@ -488,7 +489,161 @@ const gameLevels: GameLevel[] = [
       y: 350
     }
   }]
-}];
+},
+// Level 4: Expert Challenge
+{
+  name: "Tech Innovator",
+  description: "Master cutting-edge technologies and become a true tech innovator. Beware of complex challenges!",
+  timeLimit: 180,
+  pointsToWin: 1500,
+  characterSpeed: 8,
+  backgroundColor: "#f0f8ff",
+  obstacles: [
+    // Maze-like structure
+    {x: 100, y: 100, width: 600, height: 20},
+    {x: 100, y: 100, width: 20, height: 500},
+    {x: 100, y: 600, width: 600, height: 20},
+    {x: 700, y: 100, width: 20, height: 500},
+    // Inner walls
+    {x: 200, y: 200, width: 20, height: 300},
+    {x: 200, y: 200, width: 400, height: 20},
+    {x: 600, y: 200, width: 20, height: 300},
+    {x: 200, y: 500, width: 400, height: 20},
+    // Cross section
+    {x: 300, y: 300, width: 200, height: 20},
+    {x: 400, y: 300, width: 20, height: 200},
+  ],
+  objects: [
+    {
+      id: 'ai_ml',
+      type: 'skill',
+      x: 150, y: 150,
+      width: 45, height: 45,
+      icon: <Brain size={28} />,
+      points: 200,
+      title: 'AI/ML',
+      description: 'Advanced AI and machine learning skills',
+      color: '#8E44AD',
+      movePattern: 'circular',
+      speed: 2,
+      moveRange: 50,
+      initialPos: {x: 150, y: 150}
+    },
+    {
+      id: 'blockchain',
+      type: 'skill',
+      x: 650, y: 150,
+      width: 45, height: 45,
+      icon: <Database size={28} />,
+      points: 200,
+      title: 'Blockchain',
+      description: 'Decentralized app development',
+      color: '#F39C12',
+      movePattern: 'vertical',
+      speed: 1.5,
+      moveRange: 100,
+      initialPos: {x: 650, y: 150}
+    },
+    {
+      id: 'ar_vr',
+      type: 'skill',
+      x: 150, y: 550,
+      width: 45, height: 45,
+      icon: <Globe size={28} />,
+      points: 200,
+      title: 'AR/VR',
+      description: 'Augmented and virtual reality development',
+      color: '#16A085',
+      movePattern: 'horizontal',
+      speed: 2,
+      moveRange: 100,
+      initialPos: {x: 150, y: 550}
+    },
+    {
+      id: 'quantum',
+      type: 'skill',
+      x: 650, y: 550,
+      width: 45, height: 45,
+      icon: <Cpu size={28} />,
+      points: 250,
+      title: 'Quantum Computing',
+      description: 'The future of computing',
+      color: '#2980B9',
+      movePattern: 'chase',
+      speed: 0.8,
+      initialPos: {x: 650, y: 550}
+    },
+    {
+      id: 'metaverse',
+      type: 'project',
+      x: 400, y: 400,
+      width: 60, height: 60,
+      icon: <Globe size={35} />,
+      points: 350,
+      title: 'Metaverse Platform',
+      description: 'Built a revolutionary virtual world',
+      color: '#9B59B6',
+      movePattern: 'circular',
+      speed: 1,
+      moveRange: 150,
+      initialPos: {x: 400, y: 400}
+    },
+    {
+      id: 'innovation_award',
+      type: 'achievement',
+      x: 250, y: 350,
+      width: 65, height: 65,
+      icon: <Award size={45} />,
+      points: 500,
+      title: 'Tech Innovator Award',
+      description: 'Recognized for groundbreaking innovation',
+      color: '#F1C40F'
+    },
+    {
+      id: 'time_warp',
+      type: 'powerup',
+      x: 550, y: 350,
+      width: 40, height: 40,
+      icon: <Shield size={24} />,
+      points: 150,
+      title: 'Time Warp',
+      description: 'Temporarily slows down time',
+      color: '#3498DB'
+    },
+    // Advanced obstacles
+    {
+      id: 'security_threat',
+      type: 'obstacle',
+      x: 300, y: 500,
+      width: 35, height: 35,
+      icon: <AlertCircle size={24} />,
+      points: -125,
+      title: 'Security Breach',
+      description: 'A major security vulnerability!',
+      color: '#C0392B',
+      movePattern: 'chase',
+      speed: 2.5,
+      initialPos: {x: 300, y: 500}
+    },
+    {
+      id: 'complexity',
+      type: 'obstacle',
+      x: 500, y: 250,
+      width: 35, height: 35,
+      icon: <X size={24} />,
+      points: -100,
+      title: 'Complexity Overload',
+      description: 'Your system is too complex!',
+      color: '#E74C3C',
+      movePattern: 'circular',
+      speed: 3,
+      moveRange: 80,
+      initialPos: {x: 500, y: 250}
+    }
+  ]
+}
+];
+
 const PortfolioGame: React.FC = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [gameOver, setGameOver] = useState(false);

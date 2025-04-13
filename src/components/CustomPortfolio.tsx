@@ -56,22 +56,15 @@ const CustomPortfolio = () => {
     website: '',
     email: '',
   });
-  const [sections, setSections] = useState<PortfolioSection[]>([
-    { id: '1', title: 'About Me', type: 'about', order: 1, enabled: true },
-    { id: '2', title: 'Skills', type: 'skills', order: 2, enabled: true },
-    { id: '3', title: 'Projects', type: 'projects', order: 3, enabled: true },
-    { id: '4', title: 'Experience', type: 'experience', order: 4, enabled: true },
-    { id: '5', title: 'Contact', type: 'contact', order: 5, enabled: true },
-  ]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
-  const [aiPrompt, setAiPrompt] = useState('');
+  const [customPrompt, setCustomPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isAiPanelOpen, setIsAiPanelOpen] = useState(false);
-  const [customCss, setCustomCss] = useState('');
-  const [viewMode, setViewMode] = useState<'form' | 'preview'>('form');
   const [generatedHTML, setGeneratedHTML] = useState('');
-  const [isHTMLGenerating, setIsHTMLGenerating] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [streamingContent, setStreamingContent] = useState('');
+  const [isStreaming, setIsStreaming] = useState(false);
   
   const { toast } = useToast();
   const { playSound } = useSound();
@@ -91,29 +84,11 @@ const CustomPortfolio = () => {
     }
   };
 
-  const handleSave = () => {
-    if (!name || !title) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in at least your name and title",
-        variant: "destructive",
-      });
-      playSound('error');
-      return;
-    }
-
-    toast({
-      title: "Portfolio Saved!",
-      description: "Your custom portfolio has been saved successfully.",
-    });
-    playSound('success');
-  };
-
   const handleExport = () => {
-    if (!name || !title) {
+    if (!generatedHTML) {
       toast({
-        title: "Missing Information",
-        description: "Please fill in at least your name and title",
+        title: "No Portfolio Generated",
+        description: "Please generate a portfolio first",
         variant: "destructive",
       });
       playSound('error');
@@ -131,128 +106,9 @@ const CustomPortfolio = () => {
 
     toast({
       title: "Portfolio Exported!",
-      description: "Your custom portfolio has been exported and is ready to download.",
+      description: "Your custom portfolio has been exported and is ready to use.",
     });
     playSound('success');
-  };
-
-  const handleAiGenerate = async () => {
-    if (!aiPrompt) {
-      toast({
-        title: "Missing Prompt",
-        description: "Please enter a description of what you want to generate",
-        variant: "destructive",
-      });
-      playSound('error');
-      return;
-    }
-
-    setIsGenerating(true);
-    playSound('keyboardTyping');
-    
-    // Simulate AI generation with a timeout
-    setTimeout(() => {
-      // Example AI-generated content based on prompt
-      if (aiPrompt.toLowerCase().includes('developer')) {
-        setName('Alex Morgan');
-        setTitle('Full Stack Developer');
-        setBio('Passionate full-stack developer with 5+ years of experience building modern web applications. Specialized in React, Node.js, and cloud architecture.');
-        setTheme('blue');
-      } else if (aiPrompt.toLowerCase().includes('designer')) {
-        setName('Jordan Taylor');
-        setTitle('UX/UI Designer');
-        setBio('Creative designer with a passion for crafting beautiful, user-centered digital experiences. Specialized in design systems, product design, and brand identity.');
-        setTheme('purple');
-      } else if (aiPrompt.toLowerCase().includes('marketing')) {
-        setName('Cameron Riley');
-        setTitle('Digital Marketing Specialist');
-        setBio('Results-driven marketing professional with expertise in SEO, content strategy, and social media campaigns. Proven track record of growing brands online.');
-        setTheme('green');
-      } else {
-        setName('Sam Wilson');
-        setTitle('Creative Professional');
-        setBio('Versatile creative professional combining technical skills with artistic vision. Dedicated to delivering impactful digital solutions that make a difference.');
-        setTheme('orange');
-      }
-
-      // Generate some projects
-      setProjects([
-        {
-          id: '1',
-          title: 'E-commerce Platform',
-          description: 'A fully responsive e-commerce solution with payment processing and inventory management',
-          tags: ['React', 'Node.js', 'Stripe', 'MongoDB'],
-          image: 'https://picsum.photos/seed/proj1/400/300'
-        },
-        {
-          id: '2',
-          title: 'Portfolio Website',
-          description: 'A modern, responsive portfolio website with parallax scrolling and animated sections',
-          tags: ['HTML/CSS', 'JavaScript', 'Animation', 'Responsive'],
-          image: 'https://picsum.photos/seed/proj2/400/300'
-        }
-      ]);
-
-      // Generate some skills
-      setSkills([
-        { name: 'JavaScript', level: 5, category: 'frontend' },
-        { name: 'React', level: 4, category: 'frontend' },
-        { name: 'Node.js', level: 4, category: 'backend' },
-        { name: 'UI/UX Design', level: 3, category: 'design' },
-      ]);
-
-      setIsGenerating(false);
-      setIsAiPanelOpen(false);
-      
-      playSound('success');
-      toast({
-        title: "Content Generated!",
-        description: "AI has created portfolio content based on your prompt.",
-      });
-      
-      // Generate HTML with this new data
-      handleGeneratePortfolioHTML();
-    }, 3000);
-  };
-
-  const handleGeneratePortfolioHTML = async () => {
-    if (!name && !title) return;
-    
-    setIsHTMLGenerating(true);
-    
-    try {
-      // Prepare portfolio data
-      const portfolioData: PortfolioData = {
-        name,
-        title,
-        bio,
-        skills,
-        projects,
-        theme,
-        layout,
-        socialLinks,
-        profileImage: previewUrl
-      };
-      
-      // Generate HTML
-      const html = await generatePortfolioHTML(portfolioData, aiPrompt);
-      setGeneratedHTML(html);
-      
-      // If we're in preview mode, play a sound to indicate it's ready
-      if (viewMode === 'preview') {
-        playSound('success');
-      }
-    } catch (error) {
-      console.error('Error generating HTML:', error);
-      toast({
-        title: "Error",
-        description: "Failed to generate portfolio HTML. Please try again.",
-        variant: "destructive",
-      });
-      playSound('error');
-    } finally {
-      setIsHTMLGenerating(false);
-    }
   };
 
   const addNewProject = () => {
@@ -278,6 +134,93 @@ const CustomPortfolio = () => {
     playSound('popIn');
   };
 
+  const handleGeneratePortfolio = async () => {
+    if (!name || !title) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in at least your name and title",
+        variant: "destructive",
+      });
+      playSound('error');
+      return;
+    }
+    
+    // Immediately switch to preview mode
+    setShowPreview(true);
+    setIsGenerating(true);
+    setIsStreaming(true);
+    setLoadingProgress(0);
+    setStreamingContent('');
+    playSound('keyboardTyping');
+    
+    // Start progress animation
+    const progressInterval = setInterval(() => {
+      setLoadingProgress(prev => {
+        // Move faster at the beginning, slower as it approaches 90%
+        const increment = prev < 30 ? 5 : prev < 60 ? 3 : prev < 85 ? 1 : 0.5;
+        const newProgress = Math.min(prev + increment, 90);
+        return newProgress;
+      });
+    }, 300);
+    
+    try {
+      // Prepare portfolio data
+      const portfolioData: PortfolioData = {
+        name,
+        title,
+        bio,
+        skills,
+        projects,
+        theme,
+        layout,
+        socialLinks,
+        profileImage: previewUrl
+      };
+      
+      // Generate HTML using the Groq API with streaming
+      const html = await generatePortfolioHTML(
+        portfolioData, 
+        customPrompt,
+        (streamedContent) => {
+          // Update the streaming content as it arrives
+          setStreamingContent(streamedContent);
+        }
+      );
+      
+      // After receiving response, quickly complete the progress bar
+      clearInterval(progressInterval);
+      setLoadingProgress(100);
+      
+      // Short delay to show the completed progress bar
+      setTimeout(() => {
+        setGeneratedHTML(html);
+        setIsGenerating(false);
+        setIsStreaming(false);
+        playSound('success');
+        toast({
+          title: "Portfolio Generated!",
+          description: "AI has created your portfolio. Check out the preview!",
+        });
+      }, 500);
+      
+    } catch (error) {
+      console.error('Error generating HTML:', error);
+      clearInterval(progressInterval);
+      setLoadingProgress(100);
+      
+      setTimeout(() => {
+        setIsGenerating(false);
+        setIsStreaming(false);
+        toast({
+          title: "Error",
+          description: "Failed to generate portfolio HTML. Please try again.",
+          variant: "destructive",
+        });
+        playSound('error');
+      }, 500);
+    }
+  };
+
   return (
     <div className="min-h-screen w-full py-6 px-4 md:px-8 bg-gradient-to-b from-blue-50 to-white">
       <div className="max-w-6xl mx-auto">
@@ -294,146 +237,44 @@ const CustomPortfolio = () => {
           <div className="max-w-3xl mx-auto mb-6">
             <SpeechBubble type="shout" color="blue">
               <p className="font-comic text-lg text-gray-800">
-                Create your custom portfolio with AI! Fill in your details or let AI generate a portfolio based on your description. Your portfolio will be created in HTML that you can download and host anywhere.
+                Create your custom portfolio with Groq AI! Fill in your details below and let AI generate a professional portfolio website that you can download and host anywhere.
               </p>
             </SpeechBubble>
-
-            <div className="mt-4 flex justify-center gap-4">
-              <Dialog open={isAiPanelOpen} onOpenChange={setIsAiPanelOpen}>
-                <DialogTrigger asChild>
-                  <Button 
-                    variant="default" 
-                    className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 px-6 py-2 text-white font-medium rounded-full flex items-center gap-2"
-                    onMouseEnter={() => playSound('hover')}
-                    onClick={() => playSound('robotBeep')}
-                  >
-                    <Sparkles className="h-5 w-5" />
-                    <Cpu className="h-5 w-5" />
-                    Generate with AI
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Generate Portfolio with AI</DialogTitle>
-                    <DialogDescription>
-                      Describe the type of portfolio you want and our AI will generate content for you.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <Textarea
-                      placeholder="I'm a full-stack developer with 5 years of experience in React and Node.js. I enjoy creating clean, modern web applications..."
-                      value={aiPrompt}
-                      onChange={(e) => setAiPrompt(e.target.value)}
-                      className="min-h-[150px]"
-                      onFocus={() => playSound('click')}
-                    />
-                  </div>
-                  <DialogFooter>
-                    <Button 
-                      type="submit" 
-                      onClick={handleAiGenerate}
-                      disabled={isGenerating}
-                      className="relative"
-                      onMouseEnter={() => playSound('hover')}
-                    >
-                      {isGenerating ? (
-                        <>
-                          <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                          Generating...
-                        </>
-                      ) : (
-                        <>
-                          <Wand2 className="mr-2 h-4 w-4" />
-                          Generate
-                        </>
-                      )}
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-              
-              <div className="flex gap-2 bg-white p-1 rounded-full border-2 border-gray-200 shadow-sm">
-                <button
-                  className={`px-4 py-2 rounded-full flex items-center gap-2 transition-colors ${
-                    viewMode === 'form' 
-                      ? 'bg-blue-500 text-white' 
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                  onClick={() => {
-                    setViewMode('form');
-                    playSound('click');
-                  }}
-                  onMouseEnter={() => playSound('hover')}
-                >
-                  <FileEdit className="h-4 w-4" />
-                  <span>Form View</span>
-                </button>
-                <button
-                  className={`px-4 py-2 rounded-full flex items-center gap-2 transition-colors ${
-                    viewMode === 'preview' 
-                      ? 'bg-blue-500 text-white' 
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                  onClick={() => {
-                    setViewMode('preview');
-                    playSound('click');
-                    // Generate HTML if we don't have it yet
-                    if (!generatedHTML) {
-                      handleGeneratePortfolioHTML();
-                    }
-                  }}
-                  onMouseEnter={() => playSound('hover')}
-                >
-                  <Code className="h-4 w-4" />
-                  <span>HTML Preview</span>
-                </button>
-              </div>
-            </div>
           </div>
         </motion.div>
 
-        {viewMode === 'form' ? (
+        {!showPreview ? (
           // Form view
-          <div className="grid grid-cols-1 gap-6">
-            <Tabs defaultValue="content" className="w-full">
-              <TabsList className="grid grid-cols-4 mb-6 w-full">
-                <TabsTrigger 
-                  value="content" 
-                  className="font-comic"
-                  onClick={() => playSound('click')}
-                  onMouseEnter={() => playSound('hover')}
-                >
-                  <FileEdit className="mr-2 h-4 w-4" /> Content
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="projects" 
-                  className="font-comic"
-                  onClick={() => playSound('click')}
-                  onMouseEnter={() => playSound('hover')}
-                >
-                  <Layers className="mr-2 h-4 w-4" /> Projects
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="appearance" 
-                  className="font-comic"
-                  onClick={() => playSound('click')}
-                  onMouseEnter={() => playSound('hover')}
-                >
-                  <Palette className="mr-2 h-4 w-4" /> Appearance
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="export" 
-                  className="font-comic"
-                  onClick={() => playSound('click')}
-                  onMouseEnter={() => playSound('hover')}
-                >
-                  <Download className="mr-2 h-4 w-4" /> Export
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="content" className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-                <div className="space-y-6">
+          <div className="bg-white p-8 rounded-lg shadow-md">
+            <div className="space-y-8">
+              {/* Basic Information */}
+              <div>
+                <h2 className="text-xl font-semibold mb-4 text-gray-800">Personal Information</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
+                    <label className="block text-gray-700 mb-2 font-medium">Your Name</label>
+                    <Input 
+                      placeholder="John Doe" 
+                      value={name} 
+                      onChange={(e) => setName(e.target.value)} 
+                      className="border-gray-300"
+                      onFocus={() => playSound('click')}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-gray-700 mb-2 font-medium">Professional Title</label>
+                    <Input 
+                      placeholder="Full Stack Developer" 
+                      value={title} 
+                      onChange={(e) => setTitle(e.target.value)} 
+                      className="border-gray-300"
+                      onFocus={() => playSound('click')}
+                    />
+                  </div>
+                </div>
+                
+                <div className="mt-4">
                     <label className="block text-gray-700 mb-2 font-medium">Profile Photo</label>
                     <div className="flex items-center space-x-4">
                       <div className="h-24 w-24 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border-2 border-gray-200">
@@ -461,32 +302,10 @@ const CustomPortfolio = () => {
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-gray-700 mb-2 font-medium">Your Name</label>
-                    <Input 
-                      placeholder="John Doe" 
-                      value={name} 
-                      onChange={(e) => setName(e.target.value)} 
-                      className="border-gray-300"
-                      onFocus={() => playSound('click')}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 mb-2 font-medium">Professional Title</label>
-                    <Input 
-                      placeholder="Full Stack Developer" 
-                      value={title} 
-                      onChange={(e) => setTitle(e.target.value)} 
-                      className="border-gray-300"
-                      onFocus={() => playSound('click')}
-                    />
-                  </div>
-
-                  <div>
+                <div className="mt-4">
                     <label className="block text-gray-700 mb-2 font-medium">Bio / About Me</label>
                     <Textarea 
-                      rows={5} 
+                    rows={4} 
                       className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="I'm a passionate developer with 5 years of experience..."
                       value={bio}
@@ -494,10 +313,11 @@ const CustomPortfolio = () => {
                       onFocus={() => playSound('click')}
                     />
                   </div>
-
-                  <div className="space-y-3">
-                    <h3 className="font-medium text-gray-700">Social Links</h3>
+                  </div>
                     
+              {/* Social Links */}
+              <div>
+                <h2 className="text-xl font-semibold mb-4 text-gray-800">Social Links</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="flex items-center space-x-2">
                         <Github className="h-5 w-5 text-gray-500" />
@@ -545,54 +365,15 @@ const CustomPortfolio = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <h3 className="font-medium text-gray-700">Portfolio Sections</h3>
-                    <div className="space-y-2">
-                      {sections.map((section) => (
-                        <div key={section.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                          <div className="flex items-center">
-                            <span className="font-medium">{section.title}</span>
-                          </div>
-                          <div className="flex items-center space-x-4">
-                            <div className="flex items-center space-x-2">
-                              <Switch 
-                                checked={section.enabled} 
-                                onCheckedChange={(checked) => {
-                                  setSections(sections.map(s => 
-                                    s.id === section.id ? {...s, enabled: checked} : s
-                                  ));
-                                  playSound('click');
-                                }}
-                                onMouseEnter={() => playSound('hover')}
-                              />
-                              <span className="text-sm text-gray-500">
-                                {section.enabled ? 'Enabled' : 'Disabled'}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <Button 
-                    onClick={handleSave}
-                    className="w-full bg-blue-500 hover:bg-blue-600"
-                    onMouseEnter={() => playSound('hover')}
-                  >
-                    <Save className="mr-2 h-4 w-4" /> Save Content
-                  </Button>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="projects" className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <h3 className="font-medium text-lg">My Projects</h3>
+              {/* Projects Section */}
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold text-gray-800">Projects</h2>
                     <Button 
                       variant="outline" 
                       onClick={addNewProject}
                       onMouseEnter={() => playSound('hover')}
+                    size="sm"
                     >
                       Add Project
                     </Button>
@@ -600,8 +381,8 @@ const CustomPortfolio = () => {
 
                   <div className="space-y-4">
                     {projects.length === 0 ? (
-                      <div className="text-center py-8 text-gray-500">
-                        <p>No projects yet. Add a project or use AI to generate some examples.</p>
+                    <div className="text-center py-8 text-gray-500 border border-dashed border-gray-300 rounded-md">
+                      <p>No projects yet. Add some projects to showcase in your portfolio.</p>
                       </div>
                     ) : (
                       projects.map((project) => (
@@ -675,7 +456,7 @@ const CustomPortfolio = () => {
                               />
                             </div>
                           </CardContent>
-                          <CardFooter className="flex justify-between">
+                        <CardFooter className="flex justify-end">
                             <Button 
                               variant="outline" 
                               size="sm"
@@ -694,17 +475,90 @@ const CustomPortfolio = () => {
                     )}
                   </div>
                 </div>
-              </TabsContent>
-
-              <TabsContent value="appearance" className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-                <div className="space-y-6">
+              
+              {/* Skills Section */}
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold text-gray-800">Skills</h2>
+                  <Button 
+                    variant="outline" 
+                    onClick={addNewSkill}
+                    onMouseEnter={() => playSound('hover')}
+                    size="sm"
+                  >
+                    Add Skill
+                  </Button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {skills.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500 border border-dashed border-gray-300 rounded-md col-span-2">
+                      <p>No skills added yet. Add some skills to showcase your expertise.</p>
+                    </div>
+                  ) : (
+                    skills.map((skill, index) => (
+                      <div key={index} className="flex items-center space-x-2 bg-gray-50 p-3 rounded-md">
+                        <div className="flex-grow">
+                          <Input
+                            value={skill.name}
+                            onChange={(e) => {
+                              setSkills(skills.map((s, i) => 
+                                i === index ? {...s, name: e.target.value} : s
+                              ));
+                            }}
+                            className="border-0 bg-transparent p-0 font-medium focus-visible:ring-0"
+                            placeholder="Skill name"
+                            onFocus={() => playSound('click')}
+                          />
+                          <div className="mt-2 flex items-center">
+                            <span className="text-xs text-gray-500 mr-2">Level:</span>
+                            <div className="flex-grow">
+                              <Slider
+                                value={[skill.level]}
+                                min={1}
+                                max={5}
+                                step={1}
+                                onValueChange={(value) => {
+                                  setSkills(skills.map((s, i) => 
+                                    i === index ? {...s, level: value[0]} : s
+                                  ));
+                                  playSound('click');
+                                }}
+                              />
+                            </div>
+                            <span className="text-xs text-gray-500 ml-2">{skill.level}/5</span>
+                          </div>
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => {
+                            setSkills(skills.filter((_, i) => i !== index));
+                            playSound('whoosh');
+                          }}
+                          onMouseEnter={() => playSound('hover')}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 w-8 p-0"
+                        >
+                          <span className="sr-only">Remove</span>
+                          ✕
+                        </Button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+              
+              {/* Appearance */}
+              <div>
+                <h2 className="text-xl font-semibold mb-4 text-gray-800">Appearance</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-gray-700 mb-2 font-medium">Color Theme</label>
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="grid grid-cols-4 gap-3">
                       {['blue', 'purple', 'green', 'orange', 'teal', 'pink', 'red', 'slate'].map((color) => (
                         <div 
                           key={color}
-                          className={`h-12 rounded-md cursor-pointer transition-all ${
+                          className={`h-10 rounded-md cursor-pointer transition-all ${
                             theme === color ? 'ring-2 ring-offset-2 scale-105' : ''
                           }`}
                           style={{ 
@@ -730,7 +584,7 @@ const CustomPortfolio = () => {
 
                   <div>
                     <label className="block text-gray-700 mb-2 font-medium">Layout Style</label>
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-3 gap-3">
                       {[
                         { id: 'modern', label: 'Modern', icon: <Layout /> },
                         { id: 'classic', label: 'Classic', icon: <Type /> },
@@ -755,84 +609,129 @@ const CustomPortfolio = () => {
                       ))}
                     </div>
                   </div>
+                    </div>
+                  </div>
 
+              {/* Custom Prompt */}
                   <div>
-                    <label className="block text-gray-700 mb-2 font-medium">Custom CSS (Advanced)</label>
-                    <textarea 
-                      rows={5} 
-                      value={customCss}
-                      onChange={(e) => setCustomCss(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded-md font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder=".my-portfolio h1 { color: #3B82F6; }"
+                <h2 className="text-xl font-semibold mb-4 text-gray-800">Custom AI Instructions (Optional)</h2>
+                <Textarea 
+                  rows={3} 
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Add any custom instructions for the AI, e.g., 'Make it minimalist', 'Use a dark theme', 'Focus on my design skills'..."
+                  value={customPrompt}
+                  onChange={(e) => setCustomPrompt(e.target.value)}
                       onFocus={() => playSound('click')}
                     />
                   </div>
 
+              {/* Generate Button */}
+              <div className="flex justify-center pt-4">
                   <Button 
-                    onClick={handleSave}
-                    className="w-full bg-blue-500 hover:bg-blue-600"
+                  className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white px-8 py-6 rounded-xl text-lg font-bold flex items-center gap-2"
+                  disabled={isGenerating}
+                  onClick={handleGeneratePortfolio}
                     onMouseEnter={() => playSound('hover')}
                   >
-                    <Brush className="mr-2 h-4 w-4" /> Apply Style
+                  {isGenerating ? (
+                    <>
+                      <RefreshCw className="h-5 w-5 animate-spin" />
+                      Generating Your Portfolio...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-5 w-5" />
+                      <Wand2 className="h-5 w-5" />
+                      Generate AI Portfolio
+                    </>
+                  )}
                   </Button>
                 </div>
-              </TabsContent>
-
-              <TabsContent value="export" className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-                <div className="space-y-6">
-                  <div className="p-4 bg-blue-50 rounded-md border border-blue-200">
-                    <h3 className="font-medium text-blue-800 mb-2">Ready to Share Your Portfolio?</h3>
-                    <p className="text-sm text-blue-700">
-                      Your custom portfolio will be exported as a fully responsive HTML page that you can host anywhere.
-                    </p>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-gray-700 mb-2 font-medium">Portfolio Format</label>
-                      <Select onValueChange={(value) => playSound('click')} defaultValue="html">
-                        <SelectTrigger className="w-full" onMouseEnter={() => playSound('hover')}>
-                          <SelectValue placeholder="Choose format" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="html">Static HTML Website</SelectItem>
-                          <SelectItem value="react" disabled>React Application (Coming Soon)</SelectItem>
-                          <SelectItem value="nextjs" disabled>Next.js Project (Coming Soon)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-gray-700 mb-2 font-medium">SEO Options</label>
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <Switch id="seo-meta" onCheckedChange={() => playSound('click')} onMouseEnter={() => playSound('hover')} />
-                          <Label htmlFor="seo-meta">Include SEO meta tags</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Switch id="seo-sitemap" onCheckedChange={() => playSound('click')} onMouseEnter={() => playSound('hover')} />
-                          <Label htmlFor="seo-sitemap">Generate sitemap</Label>
                         </div>
                       </div>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-gray-700 mb-2 font-medium">Analytics</label>
-                      <div className="flex items-center space-x-2">
-                        <Switch id="analytics" onCheckedChange={() => playSound('click')} onMouseEnter={() => playSound('hover')} />
-                        <Label htmlFor="analytics">Setup Google Analytics</Label>
+        ) : (
+          // Preview view
+          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+            {isGenerating ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <h3 className="text-xl font-semibold text-blue-700 mb-6">Generating Your Portfolio</h3>
+                <div className="w-full max-w-md mb-4">
+                  <div className="w-full bg-gray-200 rounded-full h-4">
+                    <div 
+                      className="bg-gradient-to-r from-blue-500 to-purple-600 h-4 rounded-full transition-all duration-300 animate-pulse"
+                      style={{ width: `${loadingProgress}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-right text-sm text-gray-500 mt-1">{Math.round(loadingProgress)}%</p>
+                </div>
+                <p className="text-gray-600 text-center max-w-md">
+                  {loadingProgress < 30 ? 
+                    "Analyzing your information..." : 
+                    loadingProgress < 60 ? 
+                    "Crafting your portfolio design..." : 
+                    loadingProgress < 85 ? 
+                    "Adding customizations and styling..." : 
+                    "Finalizing your portfolio..."}
+                </p>
+                
+                {isStreaming && streamingContent && (
+                  <div className="mt-8 w-full">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-sm font-medium text-gray-700">Live Preview (Streaming)</h4>
+                      <div className="flex items-center">
+                        <span className="h-2 w-2 bg-blue-500 rounded-full animate-pulse mr-2"></span>
+                        <span className="text-xs text-blue-500 animate-pulse">AI is generating...</span>
                       </div>
                     </div>
+                    <div className="h-[400px] overflow-auto border border-gray-200 rounded-md p-2 bg-gray-50">
+                      <PortfolioHTMLPreview 
+                        htmlCode={streamingContent} 
+                        isStreaming={isStreaming}
+                      />
+                    </div>
                   </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold text-blue-700 mb-2">Your AI-Generated Portfolio</h2>
+                  <p className="text-gray-600">Your portfolio has been created! Preview it below or download the HTML to use it.</p>
+                </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                <div className="h-[600px] mb-6">
+                  <PortfolioHTMLPreview htmlCode={generatedHTML} />
+                </div>
+              </>
+            )}
+
+            <div className="flex justify-between items-center">
                     <Button 
                       variant="outline"
-                      className="border-gray-300 hover:bg-gray-50"
-                      onClick={handleSave}
+                onClick={() => {
+                  setShowPreview(false);
+                  playSound('click');
+                }}
                       onMouseEnter={() => playSound('hover')}
+                      disabled={isGenerating}
                     >
-                      <Save className="mr-2 h-4 w-4" /> Save Draft
+                <FileEdit className="mr-2 h-4 w-4" /> Back to Editor
                     </Button>
+              
                     <Button 
-                      className="bg-blue-50
+                onClick={handleExport}
+                className="bg-blue-500 hover:bg-blue-600"
+                onMouseEnter={() => playSound('hover')}
+                disabled={isGenerating || !generatedHTML}
+              >
+                <Download className="mr-2 h-4 w-4" /> Download Portfolio HTML
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default CustomPortfolio;

@@ -1,8 +1,7 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { skills } from '../data/skills';
-import { Dna, GitBranch, Code, Brain, Zap } from 'lucide-react';
+import { Dna, GitBranch, Code, Brain, Zap, Sparkles, Cpu, Globe } from 'lucide-react';
 
 interface Node {
   id: string;
@@ -48,6 +47,10 @@ const CodeDNA = () => {
   const [hoveredNode, setHoveredNode] = useState<Node | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [activeNode, setActiveNode] = useState<Node | null>(null);
+  const [activeNodeConnections, setActiveNodeConnections] = useState<string[]>([]);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [zoomLevel, setZoomLevel] = useState(1);
   
   // Create the nodes and links for the DNA visualization
   const nodes: Node[] = skills.map(skill => ({
@@ -116,7 +119,8 @@ const CodeDNA = () => {
       
       // Skip categories that are not selected (if a category is selected)
       const isFiltered = selectedCategory && node.category !== selectedCategory;
-      const gravitationalStrength = isFiltered ? 0.01 : 0.02;
+      const isActive = activeNode && (node.id === activeNode.id || activeNodeConnections.includes(node.id));
+      const gravitationalStrength = isFiltered ? 0.01 : isActive ? 0.03 : 0.02;
       
       // Apply gravitational force
       node.vx += dx * gravitationalStrength / distance;
@@ -130,7 +134,7 @@ const CodeDNA = () => {
           const nd = Math.sqrt(nx * nx + ny * ny);
           
           if (nd < 100) {
-            const repulsiveForce = isFiltered ? 0.5 : 1;
+            const repulsiveForce = isFiltered ? 0.5 : isActive ? 1.5 : 1;
             node.vx -= nx * repulsiveForce / nd;
             node.vy -= ny * repulsiveForce / nd;
           }
@@ -148,14 +152,33 @@ const CodeDNA = () => {
             const ly = otherNode.y - node.y;
             const ld = Math.sqrt(lx * lx + ly * ly);
             
+            const bothActive = activeNode && 
+                             (node.id === activeNode.id || activeNodeConnections.includes(node.id)) && 
+                             (otherNode.id === activeNode.id || activeNodeConnections.includes(otherNode.id));
+            
             if (ld > 50) {
-              const attractiveForce = isFiltered ? 0.001 : 0.005;
+              const attractiveForce = isFiltered ? 0.001 : bothActive ? 0.02 : 0.005;
               node.vx += lx * attractiveForce;
               node.vy += ly * attractiveForce;
             }
           }
         }
       });
+      
+      // Apply mouse attraction for hovered/active nodes
+      if (activeNode && (node.id === activeNode.id || activeNodeConnections.includes(node.id))) {
+        // Add slight attraction to mouse position
+        if (mousePosition.x && mousePosition.y) {
+          const mx = mousePosition.x - node.x;
+          const my = mousePosition.y - node.y;
+          const md = Math.sqrt(mx * mx + my * my);
+          
+          if (md > 10) {  // Only attract if not too close
+            node.vx += mx * 0.001;
+            node.vy += my * 0.001;
+          }
+        }
+      }
       
       // Apply velocity with damping
       node.vx *= 0.95;
@@ -182,16 +205,22 @@ const CodeDNA = () => {
           return;
         }
         
+        // Check if this connection is part of the active node
+        const isActiveConnection = activeNode && 
+                                  (sourceNode.id === activeNode.id || targetNode.id === activeNode.id) &&
+                                  (activeNodeConnections.includes(sourceNode.id) || activeNodeConnections.includes(targetNode.id));
+        
         ctx.beginPath();
         ctx.moveTo(sourceNode.x, sourceNode.y);
         
-        // Create a curved line
+        // Create a curved line with more pronounced curve for active connections
         const midX = (sourceNode.x + targetNode.x) / 2;
-        const midY = (sourceNode.y + targetNode.y) / 2 - 20;
+        const curveHeight = isActiveConnection ? -40 : -20;
+        const midY = (sourceNode.y + targetNode.y) / 2 + curveHeight;
         
         ctx.quadraticCurveTo(midX, midY, targetNode.x, targetNode.y);
         
-        // Use gradient for links
+        // Use gradient for links, brighter for active connections
         const gradient = ctx.createLinearGradient(
           sourceNode.x, sourceNode.y, targetNode.x, targetNode.y
         );
@@ -199,8 +228,43 @@ const CodeDNA = () => {
         gradient.addColorStop(1, targetNode.color);
         
         ctx.strokeStyle = gradient;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = isActiveConnection ? 4 : 2;
+        
+        // Add glow effect for active connections
+        if (isActiveConnection) {
+          ctx.shadowColor = sourceNode.color;
+          ctx.shadowBlur = 10;
+        } else {
+          ctx.shadowBlur = 0;
+        }
+        
         ctx.stroke();
+        ctx.shadowBlur = 0;
+        
+        // Add animated particles along the active connections
+        if (isActiveConnection) {
+          // Calculate position along the curve based on time
+          const time = Date.now() % 3000 / 3000;
+          const t = time;
+          
+          // Parametric equation for quadratic curve
+          const px = Math.pow(1-t, 2) * sourceNode.x + 2 * (1-t) * t * midX + Math.pow(t, 2) * targetNode.x;
+          const py = Math.pow(1-t, 2) * sourceNode.y + 2 * (1-t) * t * midY + Math.pow(t, 2) * targetNode.y;
+          
+          // Draw particle
+          ctx.beginPath();
+          ctx.arc(px, py, 3, 0, Math.PI * 2);
+          ctx.fillStyle = 'white';
+          ctx.fill();
+          
+          // Add glow
+          ctx.shadowColor = 'white';
+          ctx.shadowBlur = 8;
+          ctx.beginPath();
+          ctx.arc(px, py, 2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
       }
     });
     
@@ -220,31 +284,50 @@ const CodeDNA = () => {
         return;
       }
       
-      // Check if this node is being hovered over
+      // Check if this node is being hovered over or is active
       const isHovered = hoveredNode && hoveredNode.id === node.id;
+      const isActive = activeNode && (node.id === activeNode.id || activeNodeConnections.includes(node.id));
       
       // Node glow effect
-      if (isHovered) {
+      if (isHovered || isActive) {
         ctx.shadowColor = node.color;
-        ctx.shadowBlur = 15;
+        ctx.shadowBlur = isActive ? 20 : 15;
       }
       
-      // Draw node
+      // Draw node with pulse animation for active nodes
       ctx.beginPath();
-      ctx.arc(node.x, node.y, node.value + (isHovered ? 4 : 0), 0, Math.PI * 2);
-      ctx.fillStyle = node.color;
+      const nodeSize = node.value + (isHovered ? 4 : 0) + (isActive ? Math.sin(Date.now() / 200) * 2 + 2 : 0);
+      ctx.arc(node.x, node.y, nodeSize, 0, Math.PI * 2);
+      ctx.fillStyle = isActive ? `${node.color}` : node.color;
       ctx.fill();
       
+      // Draw sparkling particles around active nodes
+      if (isActive) {
+        const particleCount = 3;
+        for (let i = 0; i < particleCount; i++) {
+          const angle = (Date.now() / 1000 + i * (Math.PI * 2 / particleCount)) % (Math.PI * 2);
+          const distance = node.value * 1.5;
+          const px = node.x + Math.cos(angle) * distance;
+          const py = node.y + Math.sin(angle) * distance;
+          
+          ctx.beginPath();
+          const particleSize = 1 + Math.sin(Date.now() / 200 + i) * 1;
+          ctx.arc(px, py, particleSize, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+          ctx.fill();
+        }
+      }
+      
       // Draw node border
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = isActive ? '#fff' : '#000';
+      ctx.lineWidth = isActive ? 3 : 2;
       ctx.stroke();
       
       // Reset shadow
       ctx.shadowBlur = 0;
       
       // Draw node label if hovered
-      if (isHovered) {
+      if (isHovered || isActive) {
         ctx.fillStyle = '#000';
         ctx.font = 'bold 12px Comic Neue, sans-serif';
         ctx.textAlign = 'center';
@@ -262,7 +345,7 @@ const CodeDNA = () => {
     
     animate();
     
-    // Handle mouse move to detect node hover
+    // Handle mouse move to detect node hover and track mouse position
     const handleMouseMove = (e: MouseEvent) => {
       if (!canvasRef.current) return;
       
@@ -270,12 +353,15 @@ const CodeDNA = () => {
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
       
+      // Update mouse position for attraction
+      setMousePosition({ x: mouseX, y: mouseY });
+      
       // Check if mouse is over any node
       const hoveredNode = nodes.find(node => {
         const dx = node.x - mouseX;
         const dy = node.y - mouseY;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        return distance <= node.value;
+        return distance <= node.value + (activeNode && activeNode.id === node.id ? 5 : 0);
       });
       
       setHoveredNode(hoveredNode || null);
@@ -284,6 +370,32 @@ const CodeDNA = () => {
       if (canvasRef.current) {
         canvasRef.current.style.cursor = hoveredNode ? 'pointer' : 'default';
       }
+    };
+
+    // Handle click to set active node and its connections
+    const handleClick = (e: MouseEvent) => {
+      if (!canvasRef.current || !hoveredNode) return;
+      
+      if (activeNode && activeNode.id === hoveredNode.id) {
+        // Clicking same node again - deactivate
+        setActiveNode(null);
+        setActiveNodeConnections([]);
+      } else {
+        // Find all connected nodes
+        const connections = links
+          .filter(link => link.source === hoveredNode.id || link.target === hoveredNode.id)
+          .map(link => link.source === hoveredNode.id ? link.target : link.source);
+        
+        setActiveNode(hoveredNode);
+        setActiveNodeConnections(connections);
+      }
+    };
+
+    // Handle wheel for zoom functionality
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const delta = -e.deltaY * 0.001;
+      setZoomLevel(prevZoom => Math.min(Math.max(0.5, prevZoom + delta), 2));
     };
     
     // Handle window resize to adjust canvas size
@@ -298,6 +410,8 @@ const CodeDNA = () => {
     const canvas = canvasRef.current;
     if (canvas) {
       canvas.addEventListener('mousemove', handleMouseMove);
+      canvas.addEventListener('click', handleClick);
+      canvas.addEventListener('wheel', handleWheel);
       window.addEventListener('resize', handleResize);
     }
     
@@ -311,10 +425,12 @@ const CodeDNA = () => {
       
       if (canvas) {
         canvas.removeEventListener('mousemove', handleMouseMove);
+        canvas.removeEventListener('click', handleClick);
+        canvas.removeEventListener('wheel', handleWheel);
         window.removeEventListener('resize', handleResize);
       }
     };
-  }, [selectedCategory, hoveredNode]);
+  }, [selectedCategory, hoveredNode, activeNode, activeNodeConnections]);
   
   // Handle toggling fullscreen view
   const toggleFullscreen = () => {
@@ -324,6 +440,9 @@ const CodeDNA = () => {
   // Handle category selection
   const handleCategorySelect = (category: string) => {
     setSelectedCategory(prev => prev === category ? null : category);
+    // Reset active node when changing categories
+    setActiveNode(null);
+    setActiveNodeConnections([]);
   };
   
   return (
@@ -335,22 +454,32 @@ const CodeDNA = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
+            whileHover={{ scale: 1.05 }}
           >
-            <Dna className="mr-2 text-comic-blue" />
+            <motion.div
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="mr-2 text-comic-blue"
+            >
+              <Dna size={28} />
+            </motion.div>
             Code DNA Visualization
           </motion.h2>
           
-          <button 
+          <motion.button 
             onClick={toggleFullscreen}
-            className="px-4 py-2 bg-comic-purple text-white rounded-full border-2 border-black font-bangers"
+            className="px-4 py-2 bg-comic-purple text-white rounded-full border-2 border-black font-bangers flex items-center gap-2"
+            whileHover={{ scale: 1.05, backgroundColor: "#9333ea" }}
+            whileTap={{ scale: 0.95 }}
           >
+            <Sparkles size={16} />
             {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen View'}
-          </button>
+          </motion.button>
         </div>
         
         <div className="flex flex-wrap gap-2 mb-6">
           {['frontend', 'backend', 'database', 'devops', 'mobile', 'other'].map(category => (
-            <button
+            <motion.button
               key={category}
               onClick={() => handleCategorySelect(category)}
               className={`px-4 py-2 rounded-full border-2 border-black font-comic flex items-center text-sm ${
@@ -358,85 +487,263 @@ const CodeDNA = () => {
                   ? 'bg-comic-blue text-white' 
                   : 'bg-white text-black hover:bg-gray-100'
               }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.1 * ['frontend', 'backend', 'database', 'devops', 'mobile', 'other'].indexOf(category) }}
             >
-              <span className="mr-2">{CategoryIconMap[category]}</span>
+              <motion.span 
+                className="mr-2"
+                animate={selectedCategory === category ? { rotate: [0, 15, -15, 0] } : {}}
+                transition={{ duration: 0.5, repeat: selectedCategory === category ? Infinity : 0, repeatDelay: 2 }}
+              >
+                {CategoryIconMap[category]}
+              </motion.span>
               {category.charAt(0).toUpperCase() + category.slice(1)}
-            </button>
+            </motion.button>
           ))}
         </div>
         
-        <div 
+        <motion.div 
           ref={containerRef} 
           className={`relative border-4 border-black rounded-xl overflow-hidden bg-gradient-to-br from-white to-blue-50 ${
             isFullscreen ? 'h-[80vh]' : 'h-[60vh]'
           }`}
+          style={{ transform: `scale(${zoomLevel})` }}
+          animate={{ boxShadow: activeNode ? "0 0 30px rgba(0, 0, 0, 0.3)" : "0 0 15px rgba(0, 0, 0, 0.2)" }}
         >
           <canvas ref={canvasRef} className="w-full h-full" />
           
-          {/* Skill details popup */}
+          {/* Skill details popup with enhanced animations */}
           <AnimatePresence>
             {hoveredNode && (
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
+                key={hoveredNode.id}
+                initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.9 }}
                 className="absolute bg-white border-2 border-black rounded-lg shadow-lg p-4 z-10"
                 style={{
                   left: Math.min(window.innerWidth - 250, hoveredNode.x + 20),
                   top: hoveredNode.y + 20,
-                  width: '240px'
+                  width: '240px',
+                  boxShadow: `0 10px 25px -5px ${hoveredNode.color}40, 0 5px 10px -5px rgba(0,0,0,0.1)`
                 }}
               >
-                <h3 className="font-bangers text-xl mb-2 text-black">{hoveredNode.id}</h3>
+                <motion.div
+                  className="absolute top-0 left-0 w-full h-1"
+                  style={{ backgroundColor: hoveredNode.color }}
+                  layoutId={`skill-bar-${hoveredNode.id}`}
+                />
+                
+                <motion.h3 
+                  className="font-bangers text-xl mb-2 text-black flex items-center"
+                  layoutId={`skill-title-${hoveredNode.id}`}
+                >
+                  {hoveredNode.id}
+                  <motion.span 
+                    className="ml-2 text-yellow-500"
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1, rotate: [0, 15, -15, 0] }}
+                    transition={{ delay: 0.3, duration: 0.5 }}
+                  >
+                    <Sparkles size={16} />
+                  </motion.span>
+                </motion.h3>
+                
                 {skills.find(s => s.name === hoveredNode.id)?.description && (
-                  <p className="text-sm text-black mb-3 font-comic">
+                  <motion.p 
+                    className="text-sm text-black mb-3 font-comic"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.1 }}
+                  >
                     {skills.find(s => s.name === hoveredNode.id)?.description}
-                  </p>
+                  </motion.p>
                 )}
                 
-                <div className="flex items-center text-sm">
+                <motion.div 
+                  className="flex items-center text-sm"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                >
                   <span className="mr-2 font-comic text-black">Power Level:</span>
                   <div className="flex space-x-1">
                     {[1, 2, 3, 4, 5].map((level) => {
                       const skillLevel = skills.find(s => s.name === hoveredNode.id)?.level || 0;
                       return (
-                        <div 
+                        <motion.div 
                           key={level}
                           className={`w-3 h-3 rounded-full ${
                             level <= skillLevel ? hoveredNode.color : 'bg-gray-200'
                           }`}
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ delay: 0.2 + level * 0.1 }}
                         />
                       );
                     })}
                   </div>
-                </div>
+                </motion.div>
                 
                 {skills.find(s => s.name === hoveredNode.id)?.yearsExperience && (
-                  <div className="text-sm mt-2 text-black font-comic">
+                  <motion.div 
+                    className="text-sm mt-2 text-black font-comic"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
                     <span className="font-semibold">Experience:</span> {skills.find(s => s.name === hoveredNode.id)?.yearsExperience} years
-                  </div>
+                  </motion.div>
                 )}
                 
                 {skills.find(s => s.name === hoveredNode.id)?.projects && (
-                  <div className="mt-3">
+                  <motion.div 
+                    className="mt-3"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
                     <h4 className="font-comic text-sm font-bold text-black">Projects:</h4>
                     <ul className="list-disc list-inside text-xs text-black font-comic">
                       {skills.find(s => s.name === hoveredNode.id)?.projects?.slice(0, 2).map((project, i) => (
-                        <li key={i}>{project}</li>
+                        <motion.li 
+                          key={i}
+                          initial={{ opacity: 0, x: -5 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.5 + i * 0.1 }}
+                        >
+                          {project}
+                        </motion.li>
                       ))}
                     </ul>
-                  </div>
+                  </motion.div>
                 )}
+                
+                <motion.div
+                  className="mt-3 pt-2 border-t border-gray-200"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                >
+                  <motion.button
+                    className="text-xs text-comic-blue font-comic font-bold flex items-center gap-1"
+                    whileHover={{ scale: 1.05 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (activeNode && activeNode.id === hoveredNode.id) {
+                        setActiveNode(null);
+                        setActiveNodeConnections([]);
+                      } else {
+                        const connections = links
+                          .filter(link => link.source === hoveredNode.id || link.target === hoveredNode.id)
+                          .map(link => link.source === hoveredNode.id ? link.target : link.source);
+                        
+                        setActiveNode(hoveredNode);
+                        setActiveNodeConnections(connections);
+                      }
+                    }}
+                  >
+                    {activeNode && activeNode.id === hoveredNode.id ? (
+                      <>Hide connections <X size={14} /></>
+                    ) : (
+                      <>Show connections <Zap size={14} /></>
+                    )}
+                  </motion.button>
+                </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
           
-          {/* Instruction overlay */}
-          <div className="absolute bottom-4 left-4 bg-white/80 backdrop-blur-sm border-2 border-black rounded-lg p-3 text-sm font-comic text-black">
-            <p>Hover over nodes to see details. Nodes represent skills, connections show relationships.</p>
-            <p className="mt-1">Select categories to filter the visualization.</p>
-          </div>
-        </div>
+          {/* Active node background highlight */}
+          {activeNode && (
+            <motion.div
+              className="absolute inset-0 pointer-events-none"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.15 }}
+              style={{ 
+                background: `radial-gradient(circle at ${activeNode.x}px ${activeNode.y}px, ${activeNode.color} 0%, transparent 70%)`,
+                zIndex: 1
+              }}
+            />
+          )}
+          
+          {/* Enhanced instruction overlay */}
+          <motion.div 
+            className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm border-2 border-black rounded-lg p-3 text-sm font-comic text-black"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <motion.p className="flex items-center gap-1">
+              <motion.span 
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="text-comic-blue"
+              >
+                <Sparkles size={14} />
+              </motion.span>
+              <span>Hover over nodes to see details.</span>
+            </motion.p>
+            <motion.p className="mt-1 flex items-center gap-1">
+              <motion.span 
+                className="text-comic-pink"
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                <Cpu size={14} />
+              </motion.span>
+              <span>Click nodes to highlight connections.</span>
+            </motion.p>
+            <motion.p className="mt-1 flex items-center gap-1">
+              <motion.span className="text-comic-green">
+                <Globe size={14} />
+              </motion.span>
+              <span>Use mouse wheel to zoom in/out.</span>
+            </motion.p>
+          </motion.div>
+          
+          {/* Zoom controls */}
+          <motion.div
+            className="absolute bottom-4 right-4 flex gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
+            <motion.button
+              className="w-8 h-8 rounded-full bg-white border-2 border-black flex items-center justify-center shadow-md"
+              whileHover={{ scale: 1.1, backgroundColor: "#f0f0f0" }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setZoomLevel(z => Math.max(0.5, z - 0.1))}
+            >
+              -
+            </motion.button>
+            <motion.button
+              className="w-8 h-8 rounded-full bg-white border-2 border-black flex items-center justify-center shadow-md"
+              whileHover={{ scale: 1.1, backgroundColor: "#f0f0f0" }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setZoomLevel(1)}
+            >
+              <motion.span 
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.7 }}
+              >
+                ↺
+              </motion.span>
+            </motion.button>
+            <motion.button
+              className="w-8 h-8 rounded-full bg-white border-2 border-black flex items-center justify-center shadow-md"
+              whileHover={{ scale: 1.1, backgroundColor: "#f0f0f0" }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setZoomLevel(z => Math.min(2, z + 0.1))}
+            >
+              +
+            </motion.button>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-
 import { toast } from 'sonner';
 
 export interface PortfolioData {
@@ -25,47 +24,53 @@ interface AIPortfolioResponse {
 }
 
 // Groq API key - in production this should be stored securely
-const GROQ_API_KEY = "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";
-const GROQ_MODEL = "meta-llama/llama-4-maverick-17b-128e-instruct";
+const GROQ_API_KEY = "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";
+const GROQ_MODEL = "deepseek/deepseek-chat-v3-0324:free";
 
-export const generatePortfolioHTML = async (promptData: PortfolioData, customPrompt?: string): Promise<string> => {
+export const generatePortfolioHTML = async (
+  promptData: PortfolioData, 
+  customPrompt?: string,
+  onStreamUpdate?: (chunk: string) => void
+): Promise<string> => {
   try {
     // Display loading toast
-    toast.loading("Generating portfolio with AI...");
+    toast.loading("Creating your portfolio with AI... This may take a moment.");
     
     // Create structured data for the prompt
     const structuredData = JSON.stringify(promptData, null, 2);
     
     // Create the prompt for the AI
-    let prompt = `Generate a professional, responsive HTML portfolio page with the following information:
-    
+    let prompt = `Generate a professional, high-quality responsive HTML portfolio website with the following information:
+     
 ${structuredData}
 
 The HTML should:
-1. Be a single, complete HTML file with inline CSS
-2. Use a clean, modern design in light mode
+1. Be a single, complete HTML file with inline CSS and JavaScript
+2. Use a clean, modern design with appealing visuals
 3. Be fully responsive for mobile, tablet, and desktop
 4. Include sections for: intro, about me, skills, projects, and contact
-5. Use appropriate icons for social links
-6. Implement subtle animations and hover effects
+5. Use appropriate icons for social links (FontAwesome or similar)
+6. Implement smooth animations and hover effects
 7. Include SEO meta tags
 8. Use semantic HTML5
-9. Include FontAwesome or similar for icons
-10. Have a color scheme based on the theme: ${promptData.theme}
-11. Use the layout style: ${promptData.layout}
-12. Be ready to use without any additional files or dependencies
-13. Include proper spacing, typography, and visual hierarchy
-14. Return ONLY the HTML code without any explanation or markdown formatting
+9. Have a color scheme based on the theme: ${promptData.theme}
+10. Use the layout style: ${promptData.layout}
+11. Be ready to use without any additional files or dependencies
+12. Include proper spacing, typography, and visual hierarchy
+13. Show projects in an attractive grid or card layout
+14. Include skill bars or visual representations of skill levels
+15. Return ONLY the HTML code without any explanation or markdown formatting
+16 all the code should be in the one file the html css and js code all in the one file only index.html
 
 The code should be modern, valid HTML5, and follow best practices.`;
 
     // Add custom prompt if provided
     if (customPrompt && customPrompt.trim().length > 0) {
-      prompt += `\n\nAdditional instructions: ${customPrompt}`;
+      prompt += `\n\nAdditional customization instructions: ${customPrompt}`;
     }
 
-    // Call the Groq API
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    // Call the Groq API with streaming enabled
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${GROQ_API_KEY}`,
@@ -84,11 +89,11 @@ The code should be modern, valid HTML5, and follow best practices.`;
           }
         ],
         temperature: 0.7,
-        max_tokens: 4000
+        max_tokens: 100000,
+        stream: true // Enable streaming
       })
     });
-
-    // Check if the request was successful
+ 
     if (!response.ok) {
       const errorData = await response.json();
       console.error("Groq API error:", errorData);
@@ -97,12 +102,54 @@ The code should be modern, valid HTML5, and follow best practices.`;
       return generateFallbackHTML(promptData);
     }
 
-    // Parse the response
-    const data = await response.json();
-    const generatedHtml = data.choices[0].message.content.trim();
+    // Process the streaming response
+    if (!response.body) {
+      throw new Error("Response body is null");
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      
+      // Decode the chunk
+      const chunk = decoder.decode(value, { stream: true });
+      
+      // Parse the SSE data
+      const lines = chunk.split('\n');
+      let streamedContent = '';
+      
+      for (const line of lines) {
+        // Skip empty lines and "data: [DONE]"
+        if (!line.trim() || line.includes('[DONE]')) continue;
+        
+        // Extract the "data:" part
+        if (line.startsWith('data:')) {
+          try {
+            const jsonData = JSON.parse(line.slice(5));
+            // Extract the content delta
+            const contentDelta = jsonData.choices[0]?.delta?.content || '';
+            if (contentDelta) {
+              streamedContent += contentDelta;
+              fullText += contentDelta;
+              
+              // Call the streaming callback if provided
+              if (onStreamUpdate) {
+                onStreamUpdate(fullText);
+              }
+            }
+          } catch (e) {
+            console.error('Error parsing SSE data:', e);
+          }
+        }
+      }
+    }
     
     // Clean up the response if it contains markdown code blocks
-    const cleanedHtml = generatedHtml.replace(/```html|```/g, "").trim();
+    const cleanedHtml = fullText.replace(/```html|```/g, "").trim();
     
     toast.dismiss();
     toast.success("Portfolio generated successfully!");
