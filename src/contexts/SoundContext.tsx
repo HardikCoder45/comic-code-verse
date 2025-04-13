@@ -30,12 +30,14 @@ interface SoundContextType {
   toggleMute: () => void;
   playSound: (type: SoundType) => void;
   stopSound: (type: SoundType) => void;
+  volumeLevel: number;
+  setVolumeLevel: (level: number) => void;
 }
 
 const SoundContext = createContext<SoundContextType | undefined>(undefined);
 
 export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isMuted, isLoaded, toggleMute, playSound, stopSound } = useSoundEffects();
+  const { isMuted, isLoaded, toggleMute, playSound, stopSound, volumeLevel, setVolumeLevel } = useSoundEffects();
   
   // Listen for key press to toggle mute
   useEffect(() => {
@@ -70,7 +72,15 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [toggleMute, playSound]);
   
   return (
-    <SoundContext.Provider value={{ isMuted, isLoaded, toggleMute, playSound, stopSound }}>
+    <SoundContext.Provider value={{ 
+      isMuted, 
+      isLoaded, 
+      toggleMute, 
+      playSound, 
+      stopSound,
+      volumeLevel,
+      setVolumeLevel
+    }}>
       {children}
     </SoundContext.Provider>
   );

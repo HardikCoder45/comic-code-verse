@@ -14,6 +14,7 @@ const ProjectViewSwitcher: React.FC<ProjectViewSwitcherProps> = ({ currentView, 
   const handleViewChange = (view: 'grid' | 'carousel' | 'book') => {
     setCurrentView(view);
     playSound('click');
+    setTimeout(() => playSound('transition'), 100);
   };
   
   return (
