@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gamepad2, Sparkles, Trophy, Zap, Star, Rocket, Target, Gauge, Flame, Award, Medal, Badge, Crown, Gift } from 'lucide-react';
+import { Gamepad2, Sparkles, Trophy, Zap, Star, Rocket, Target, Gauge, Flame, Award, Medal, Badge, Crown, Gift, Users2 } from 'lucide-react';
 import { useSound } from '../contexts/SoundContext';
 
 const EnhancedGameFeatures = () => {
@@ -239,7 +239,7 @@ const awards = [
   {
     title: "Team Collaborator",
     description: "Demonstrated exceptional teamwork skills, facilitating successful project completions through effective communication and leadership.",
-    icon: <Users size={24} className="text-white" />,
+    icon: <Users2 size={24} className="text-white" />,
     tags: ["Teamwork", "Communication", "Leadership"],
     rarity: "uncommon",
     unlockDate: "November 5, 2024"
