@@ -1,10 +1,12 @@
+
 import React, { useState, useEffect, useRef } from 'react';
-import { CopyIcon, CheckIcon, Code, Eye } from 'lucide-react';
+import { CopyIcon, CheckIcon, Code, Eye, ExternalLink, Download } from 'lucide-react';
 import { useSound } from '../contexts/SoundContext';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from 'sonner';
 
 interface PortfolioHTMLPreviewProps {
   htmlCode: string;
@@ -26,6 +28,30 @@ const PortfolioHTMLPreview: React.FC<PortfolioHTMLPreviewProps> = ({
     setCopied(true);
     playSound('success');
     setTimeout(() => setCopied(false), 2000);
+    toast.success("HTML code copied to clipboard!");
+  };
+
+  const downloadHTML = () => {
+    const element = document.createElement('a');
+    const file = new Blob([htmlCode], {type: 'text/html'});
+    element.href = URL.createObjectURL(file);
+    element.download = "portfolio.html";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    playSound('success');
+    toast.success("HTML file downloaded successfully!");
+  };
+
+  const openInNewTab = () => {
+    const newWindow = window.open();
+    if (newWindow) {
+      newWindow.document.write(htmlCode);
+      newWindow.document.close();
+      playSound('click');
+    } else {
+      toast.error("Popup blocked! Please allow popups for this site.");
+    }
   };
 
   useEffect(() => {
@@ -73,22 +99,50 @@ const PortfolioHTMLPreview: React.FC<PortfolioHTMLPreviewProps> = ({
             </TabsTrigger>
           </TabsList>
           
-          {activeTab === 'code' && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={copyToClipboard}
-              className="text-gray-600 hover:text-gray-900"
-              onMouseEnter={() => playSound('hover')}
-            >
-              {copied ? (
-                <CheckIcon className="h-4 w-4 text-green-500 mr-2" />
-              ) : (
-                <CopyIcon className="h-4 w-4 mr-2" />
-              )}
-              {copied ? 'Copied!' : 'Copy Code'}
-            </Button>
-          )}
+          <div className="flex gap-2">
+            {activeTab === 'preview' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={openInNewTab}
+                className="text-gray-600 hover:text-gray-900"
+                onMouseEnter={() => playSound('hover')}
+              >
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Open in New Tab
+              </Button>
+            )}
+            
+            {activeTab === 'code' && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={copyToClipboard}
+                  className="text-gray-600 hover:text-gray-900"
+                  onMouseEnter={() => playSound('hover')}
+                >
+                  {copied ? (
+                    <CheckIcon className="h-4 w-4 text-green-500 mr-2" />
+                  ) : (
+                    <CopyIcon className="h-4 w-4 mr-2" />
+                  )}
+                  {copied ? 'Copied!' : 'Copy Code'}
+                </Button>
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={downloadHTML}
+                  className="text-gray-600 hover:text-gray-900"
+                  onMouseEnter={() => playSound('hover')}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download HTML
+                </Button>
+              </>
+            )}
+          </div>
         </div>
         
         <TabsContent value="preview" className="flex-grow overflow-auto p-0 m-0">

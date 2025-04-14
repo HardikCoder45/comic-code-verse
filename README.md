@@ -1,73 +1,45 @@
-# Welcome to your Lovable project
 
-## Project info
+# Portfolio Game and Visualization Enhancement
 
-**URL**: https://lovable.dev/projects/4b5653f6-960f-43ad-9e0d-7e8f5ec3abb1
+This project features enhanced portfolio games and visualization tools that make your portfolio stand out.
 
-## How can I edit this code?
+## Key Features
 
-There are several ways of editing your application.
+### 1. Portfolio Game Hub
+- Multiple interactive games that showcase your skills and projects
+- Project Builder Challenge: Complete tasks within time limits
+- Career Progression: Navigate through different skill levels
+- Portfolio Arcade: Collect skills while avoiding obstacles
 
-**Use Lovable**
+### 2. Code DNA Visualization
+- Interactive skill network visualization
+- Hover over nodes to see detailed information
+- Connect related skills to understand your expertise
+- Filter skills by category
+- Zoom and pan functionality for detailed exploration
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/4b5653f6-960f-43ad-9e0d-7e8f5ec3abb1) and start prompting.
+### 3. Enhanced HTML Portfolio Preview
+- Toggle between code and preview modes
+- Copy HTML with a single click
+- Download generated HTML files
+- Open preview in a new tab
 
-Changes made via Lovable will be committed automatically to this repo.
+## How to Use
 
-**Use your preferred IDE**
+1. Navigate to the Game Hub (/game-hub) to play portfolio games
+2. Explore Code DNA (/code-dna) to visualize your skill network
+3. Use Portfolio HTML Preview to view and export your portfolio
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Implementation Details
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- Built with React, TypeScript, and Tailwind CSS
+- Uses Framer Motion for smooth animations
+- Interactive visualizations with Canvas API
+- Responsive design for all screen sizes
 
-Follow these steps:
+## Future Improvements
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/4b5653f6-960f-43ad-9e0d-7e8f5ec3abb1) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes it is!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- Save game progress and high scores
+- Add more interactive games and challenges
+- Enhance visualization with 3D effects
+- Add social sharing capabilities

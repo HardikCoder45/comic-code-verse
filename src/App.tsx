@@ -1,9 +1,8 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 
 // Components
@@ -34,19 +33,22 @@ const TimeTravel = lazy(() => import("./components/TimeTravel"));
 const CodeDNA = lazy(() => import("./components/CodeDNA"));
 const PortfolioGame = lazy(() => import("./components/PortfolioGame"));
 const CustomPortfolio = lazy(() => import("./components/CustomPortfolio"));
+const PortfolioGameHub = lazy(() => import("./components/PortfolioGameHub"));
 
 const queryClient = new QueryClient();
 
-const App = () => {
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <SoundProvider>
-          <BrowserRouter>
+          <Router>
             <Routes>
               <Route path="/" element={<BookLayout isLandingPage={true}><Landing /></BookLayout>} />
+              <Route path="/game-hub" element={<PortfolioGameHub />} />
+              <Route path="/code-dna" element={<CodeDNA />} />
               <Route path="*" element={
                 <div className="min-h-screen w-full flex relative bg-blue-50">
                   <Suspense fallback={
@@ -84,11 +86,11 @@ const App = () => {
                 </div>
               } />
             </Routes>
-          </BrowserRouter>
+          </Router>
         </SoundProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
-};
+}
 
 export default App;
