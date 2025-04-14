@@ -103,8 +103,13 @@ const PortfolioNavigation: React.FC = () => {
                   )}
                   
                   <motion.div
-                    className="absolute top-full left-0 w-full bg-black text-white text-xs p-2 rounded opacity-0 invisible z-10 pointer-events-none"
-                    whileHover={{ opacity: 1, visible: 'visible', y: 5 }}
+                    className="absolute top-full left-0 w-full bg-black text-white text-xs p-2 rounded opacity-0 z-10 pointer-events-none"
+                    whileHover={{ 
+                      opacity: 1, 
+                      y: 5,
+                      transition: { delay: 0.3 }
+                    }}
+                    // Fixed the 'visible' property issue
                     transition={{ delay: 0.3 }}
                   >
                     {item.description}

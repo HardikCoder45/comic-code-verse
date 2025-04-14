@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import SpeechBubble from './SpeechBubble';
-import { Home, BookOpen, User, Image, MessageSquare, Calendar, Gamepad, Palette, Dna, Code } from 'lucide-react';
+import { Home, BookOpen, User, Image, MessageSquare, Calendar, Gamepad, Palette, Dna, Code, Award } from 'lucide-react';
 import { useSound } from '../contexts/SoundContext';
 
 const ComicStripNavigation = () => {
@@ -19,6 +19,7 @@ const ComicStripNavigation = () => {
     { path: '/timeline', label: 'Timeline', icon: Calendar, color: 'bg-purple-500' },
     { path: '/code-samples', label: 'Code', icon: Code, color: 'bg-teal-500' },
     { path: '/game', label: 'Game', icon: Gamepad, color: 'bg-yellow-500' },
+    { path: '/awards', label: 'Awards', icon: Award, color: 'bg-amber-500' },
     { path: '/custom-portfolio', label: 'Portfolio', icon: Palette, color: 'bg-blue-500' },
     { path: '/dna', label: 'Code DNA', icon: Dna, color: 'bg-pink-500' },
     { path: '/contact', label: 'Contact', icon: MessageSquare, color: 'bg-purple-500' }

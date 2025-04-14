@@ -10,6 +10,7 @@ This project features enhanced portfolio games and visualization tools that make
 - Project Builder Challenge: Complete tasks within time limits
 - Career Progression: Navigate through different skill levels
 - Portfolio Arcade: Collect skills while avoiding obstacles
+- Achievement System: Earn awards based on your accomplishments
 
 ### 2. Code DNA Visualization
 - Interactive skill network visualization
@@ -24,11 +25,19 @@ This project features enhanced portfolio games and visualization tools that make
 - Download generated HTML files
 - Open preview in a new tab
 
+### 4. Awards & Achievements
+- Showcase your professional accomplishments
+- Interactive award cards with detailed information
+- Visual rarity system to highlight significant achievements
+- Animated effects for enhanced visual appeal
+- Tag-based categorization for easy filtering
+
 ## How to Use
 
 1. Navigate to the Game Hub (/game-hub) to play portfolio games
 2. Explore Code DNA (/code-dna) to visualize your skill network
 3. Use Portfolio HTML Preview to view and export your portfolio
+4. Browse your Awards section to showcase achievements
 
 ## Implementation Details
 
@@ -36,6 +45,7 @@ This project features enhanced portfolio games and visualization tools that make
 - Uses Framer Motion for smooth animations
 - Interactive visualizations with Canvas API
 - Responsive design for all screen sizes
+- Page turning transitions for immersive experience
 
 ## Future Improvements
 
@@ -43,3 +53,5 @@ This project features enhanced portfolio games and visualization tools that make
 - Add more interactive games and challenges
 - Enhance visualization with 3D effects
 - Add social sharing capabilities
+- Create printable award certificates
+

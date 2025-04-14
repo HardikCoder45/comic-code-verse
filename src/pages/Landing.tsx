@@ -5,6 +5,7 @@ import Comic3DPanel from '../components/Comic3DPanel';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Code, Github, Zap, Star, Users, BookOpen, Award, Rocket, Coffee, Brain, Database, PanelLeft, PanelRight, MessageSquare, Heart, ExternalLink, Sparkles } from 'lucide-react';
 import SkillBadge from '../components/SkillBadge';
+
 const Landing = () => {
   const [showElements, setShowElements] = useState({
     hero: false,
@@ -498,11 +499,11 @@ const Landing = () => {
       </motion.div>
     </motion.div>
 
-    <style jsx>{`
-      .perspective-1000 {
+    <style>
+      {`.perspective-1000 {
         perspective: 1000px;
-      }
-    `}</style>
+      }`}
+    </style>
     </div>;
 };
 export default Landing;
