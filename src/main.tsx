@@ -2,9 +2,9 @@
 import { createRoot } from 'react-dom/client';
 import { StrictMode, lazy, Suspense } from 'react';
 import App from './App.tsx';
-import './index.css';
+import './styles/theme.css'; // Import theme.css first
+import './index.css'; // Then import index.css
 import './styles/animations.css';
-import './styles/theme.css';
 import ComicLoading from './components/ComicLoading';
 
 // Performance optimization with code splitting

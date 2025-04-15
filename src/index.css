@@ -1,17 +1,8 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Bangers&family=Permanent+Marker&display=swap');
 
-/* Note: We've moved the Tailwind directives to theme.css, so we're removing them from here */
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-comic-background text-black font-comic;
-  }
-}
+/* Import the component classes */
+@tailwind components;
 
 @layer components {
   .comic-panel {
@@ -124,6 +115,7 @@
   }
 }
 
+/* Define regular CSS for the animation effects */
 /* 3D Comic Book Effect */
 .comic-book-cover {
   @apply relative;
