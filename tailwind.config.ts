@@ -138,6 +138,32 @@ export default {
 						transform: 'scale(1)',
 						opacity: '1'
 					}
+				},
+				'page-turn': {
+					'0%': {
+						transform: 'rotateY(0deg)',
+						boxShadow: '0 5px 15px rgba(0,0,0,0.2)'
+					},
+					'100%': {
+						transform: 'rotateY(-180deg)',
+						boxShadow: '0 15px 25px rgba(0,0,0,0.3)'
+					}
+				},
+				'pulse-glow': {
+					'0%, 100%': {
+						boxShadow: '0 0 10px rgba(255,215,0,0.5)'
+					},
+					'50%': {
+						boxShadow: '0 0 25px rgba(255,215,0,0.9)'
+					}
+				},
+				'shimmer': {
+					'0%': {
+						backgroundPosition: '-500px 0'
+					},
+					'100%': {
+						backgroundPosition: '500px 0'
+					}
 				}
 			},
 			animation: {
@@ -146,7 +172,10 @@ export default {
 				'float': 'float 3s ease-in-out infinite',
 				'shake': 'shake 2s ease-in-out infinite',
 				'flip': 'flip 0.6s ease-in-out',
-				'pop': 'pop 0.3s ease-out'
+				'pop': 'pop 0.3s ease-out',
+				'page-turn': 'page-turn 1.2s ease-in-out',
+				'pulse-glow': 'pulse-glow 2s infinite',
+				'shimmer': 'shimmer 2s infinite linear'
 			},
 			fontFamily: {
 				'comic': ['"Comic Neue"', 'cursive'],

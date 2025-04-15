@@ -1,20 +1,70 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gamepad2, Sparkles, Trophy, Zap, Star, Rocket, Target, Gauge, Flame, Award, Medal, Badge, Crown, Gift, Users2 } from 'lucide-react';
+import { Gamepad2, Sparkles, Trophy, Zap, Star, Rocket, Target, Gauge, Flame, Award, Medal, Badge, Crown, Gift, Users2, Volume2, VolumeX } from 'lucide-react';
 import { useSound } from '../contexts/SoundContext';
+import { toast } from 'sonner';
 
 const EnhancedGameFeatures = () => {
   const [expandedAward, setExpandedAward] = useState<number | null>(null);
-  const { playSound } = useSound();
+  const { playSound, isMuted, toggleMute } = useSound();
+  
+  useEffect(() => {
+    // Play achievement sound when component mounts
+    playSound('achievementUnlock');
+  }, [playSound]);
   
   const handleAwardClick = (index: number) => {
     playSound('click');
     setExpandedAward(expandedAward === index ? null : index);
+    
+    if (expandedAward !== index) {
+      toast.success(`Achievement details revealed: ${awards[index].title}`);
+    }
   };
 
   return (
-    <div className="w-full bg-gradient-to-br from-indigo-900 to-purple-900 p-6 rounded-xl shadow-xl">
+    <div className="w-full bg-gradient-to-br from-indigo-900 to-purple-900 p-6 rounded-xl shadow-xl relative overflow-hidden">
+      {/* Background particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full bg-white/10"
+            style={{
+              width: Math.random() * 8 + 2,
+              height: Math.random() * 8 + 2,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, 30, 0],
+              opacity: [0.1, 0.3, 0.1],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: Math.random() * 5,
+            }}
+          />
+        ))}
+      </div>
+      
+      {/* Sound toggle button */}
+      <motion.button
+        className="absolute top-4 right-4 p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={toggleMute}
+      >
+        {isMuted ? (
+          <VolumeX size={18} className="text-white/70" />
+        ) : (
+          <Volume2 size={18} className="text-white/70" />
+        )}
+      </motion.button>
+      
       <h2 className="text-3xl font-bangers text-center text-white mb-6 flex items-center justify-center">
         <Gamepad2 className="mr-2 text-yellow-400" size={32} />
         Enhanced Portfolio Game Features
@@ -29,6 +79,7 @@ const EnhancedGameFeatures = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
             whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.15)' }}
+            onMouseEnter={() => playSound('hover')}
           >
             <div className="flex items-start">
               <div className="bg-gradient-to-br from-yellow-400 to-orange-500 p-3 rounded-full mr-4">
@@ -65,6 +116,7 @@ const EnhancedGameFeatures = () => {
               }}
               layoutId={`award-card-${index}`}
               onClick={() => handleAwardClick(index)}
+              onMouseEnter={() => playSound('hover')}
             >
               {/* Top glow effect when expanded */}
               {expandedAward === index && (
