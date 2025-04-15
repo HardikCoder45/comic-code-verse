@@ -19,7 +19,7 @@ interface HTMLAttributes {
 // Fix for X component in CodeDNA
 declare namespace JSX {
   interface IntrinsicElements {
-    'X': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+    'x': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
   }
 }
 
