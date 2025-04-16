@@ -1,14 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Award, Check, Clock, Cpu, Database, GitBranch, Globe, Heart, Play, RotateCcw, Rocket, Shield, Star, Trophy, Zap } from 'lucide-react';
 import { toast } from 'sonner';
-import { useSound } from '../contexts/SoundContext';
-
-declare global {
-  interface Window {
-    confetti?: (options?: any) => void;
-  }
-}
 
 interface ProjectTask {
   id: string;
@@ -81,24 +75,6 @@ const GameProjectChallenge: React.FC = () => {
   const [lives, setLives] = useState(3);
   const [projectComplete, setProjectComplete] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
-  const { playSound } = useSound();
-
-  useEffect(() => {
-    if (typeof window.confetti === 'undefined') {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js';
-      script.async = true;
-      document.body.appendChild(script);
-      
-      script.onload = () => {
-        console.log('Confetti script loaded successfully');
-      };
-      
-      script.onerror = () => {
-        console.error('Failed to load confetti script');
-      };
-    }
-  }, []);
 
   useEffect(() => {
     if (activeTask && timeRemaining !== null) {
@@ -116,11 +92,12 @@ const GameProjectChallenge: React.FC = () => {
   }, [activeTask, timeRemaining]);
 
   useEffect(() => {
+    // Check if all tasks are completed
     if (projectTasks.every(task => task.completed) && !projectComplete) {
       setProjectComplete(true);
       toast.success("Project complete! You've mastered all challenges!");
-      playSound('success');
       
+      // Trigger celebration
       const triggerConfetti = () => {
         const colors = ['#4A90E2', '#F06292', '#66BB6A', '#FFD54F', '#AB47BC'];
         
@@ -131,14 +108,15 @@ const GameProjectChallenge: React.FC = () => {
           origin: { y: 0.6 }
         };
         
+        // @ts-ignore - confetti is loaded globally
         if (typeof window.confetti === 'function') {
           window.confetti(confettiConfig);
         }
       };
       
-      setTimeout(triggerConfetti, 500);
+      triggerConfetti();
     }
-  }, [projectTasks, projectComplete, playSound]);
+  }, [projectTasks, projectComplete]);
 
   const startTask = (taskId: string) => {
     const task = projectTasks.find(t => t.id === taskId);
@@ -146,7 +124,6 @@ const GameProjectChallenge: React.FC = () => {
       setActiveTask(taskId);
       setTimeRemaining(task.timeRequired);
       toast.info(`Started: ${task.name}`);
-      playSound('notification');
     }
   };
 
@@ -163,7 +140,6 @@ const GameProjectChallenge: React.FC = () => {
     if (task) {
       setScore(prev => prev + task.points);
       toast.success(`Task completed: ${task.name} (+${task.points} points)`);
-      playSound('success');
     }
     
     setActiveTask(null);
@@ -174,7 +150,6 @@ const GameProjectChallenge: React.FC = () => {
     setActiveTask(null);
     setTimeRemaining(null);
     setLives(prev => prev - 1);
-    playSound('error');
     
     if (lives <= 1) {
       toast.error("Game over! You've run out of lives.");
@@ -194,7 +169,6 @@ const GameProjectChallenge: React.FC = () => {
     setTimeRemaining(null);
     setProjectComplete(false);
     toast.info("Game reset! Start building your portfolio again.");
-    playSound('transition');
   };
 
   return (
@@ -243,7 +217,7 @@ const GameProjectChallenge: React.FC = () => {
               className="h-full bg-gradient-to-r from-green-400 to-blue-500"
               initial={{ width: "100%" }}
               animate={{ 
-                width: `${(timeRemaining / (projectTasks.find(t => t.id === activeTask)?.timeRequired || 1)) * 100}%` 
+                width: `${(timeRemaining / projectTasks.find(t => t.id === activeTask)?.timeRequired! || 1) * 100}%` 
               }}
               transition={{ duration: 0.5 }}
             />
@@ -255,7 +229,6 @@ const GameProjectChallenge: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => completeTask(activeTask)}
-              onMouseEnter={() => playSound('hover')}
             >
               Complete Task
             </motion.button>
@@ -275,7 +248,6 @@ const GameProjectChallenge: React.FC = () => {
                   : 'bg-white/5 border-gray-600 hover:bg-white/10'
             }`}
             whileHover={!task.completed && activeTask !== task.id ? { scale: 1.02 } : {}}
-            onMouseEnter={() => playSound('hover')}
           >
             <div className="flex items-start">
               <div 
@@ -320,7 +292,6 @@ const GameProjectChallenge: React.FC = () => {
                       whileTap={{ scale: 0.95 }}
                       onClick={() => startTask(task.id)}
                       disabled={!!activeTask}
-                      onMouseEnter={() => playSound('hover')}
                     >
                       Start Task
                     </motion.button>
@@ -372,7 +343,6 @@ const GameProjectChallenge: React.FC = () => {
               whileHover={{ scale: 1.05, boxShadow: "0px 10px 20px rgba(0,0,0,0.2)" }}
               whileTap={{ scale: 0.95 }}
               onClick={resetGame}
-              onMouseEnter={() => playSound('hover')}
             >
               <RotateCcw size={16} className="mr-2 inline-block" />
               Play Again
@@ -393,7 +363,6 @@ const GameProjectChallenge: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={resetGame}
-              onMouseEnter={() => playSound('hover')}
             >
               <RotateCcw size={14} className="mr-1 inline-block" />
               Reset Game
