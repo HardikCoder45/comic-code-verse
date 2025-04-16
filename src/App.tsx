@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -62,8 +61,8 @@ function App() {
               <Routes>
                 <Route path="/" element={<BookLayout isLandingPage={true}><Landing /></BookLayout>} />
                 <Route path="/game-hub" element={<PortfolioGameHub />} />
-                <Route path="/code-dna" element={<CodeDNA />} />
-                <Route path="/awards" element={<AwardsShowcase />} />
+                <Route path="/code-dna" element={<BookLayout><CodeDNA /></BookLayout>} />
+                <Route path="/awards" element={<BookLayout><Awards /></BookLayout>} />
                 <Route path="*" element={
                   <div className="min-h-screen w-full flex relative bg-blue-50">
                     <Suspense fallback={
@@ -89,7 +88,6 @@ function App() {
                             <Route path="/game-features" element={<EnhancedGameFeatures />} />
                             <Route path="/custom-portfolio" element={<CustomPortfolio />} />
                             <Route path="/contact" element={<Contact />} />
-                            <Route path="/awards" element={<AwardsShowcase />} />
                             <Route path="*" element={<NotFound />} />
                           </Routes>
                         </BookLayout>

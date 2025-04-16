@@ -928,67 +928,107 @@ const PortfolioGame: React.FC = () => {
   // Keyboard controls
   useEffect(() => {
     if (!gameStarted || gameOver || levelCompleted) return;
+    const keysPressed = new Set<string>();
+    
     const handleKeyDown = (e: KeyboardEvent) => {
-      switch (e.key) {
-        case 'ArrowUp':
-        case 'w':
-          setVelocity(prev => ({
-            ...prev,
-            y: -characterSpeed
-          }));
-          break;
-        case 'ArrowDown':
-        case 's':
-          setVelocity(prev => ({
-            ...prev,
-            y: characterSpeed
-          }));
-          break;
-        case 'ArrowLeft':
-        case 'a':
-          setVelocity(prev => ({
-            ...prev,
-            x: -characterSpeed
-          }));
-          break;
-        case 'ArrowRight':
-        case 'd':
-          setVelocity(prev => ({
-            ...prev,
-            x: characterSpeed
-          }));
-          break;
-      }
+      keysPressed.add(e.key.toLowerCase());
+      updateVelocity();
     };
+    
     const handleKeyUp = (e: KeyboardEvent) => {
-      switch (e.key) {
-        case 'ArrowUp':
-        case 'w':
-        case 'ArrowDown':
-        case 's':
-          setVelocity(prev => ({
-            ...prev,
-            y: 0
-          }));
-          break;
-        case 'ArrowLeft':
-        case 'a':
-        case 'ArrowRight':
-        case 'd':
-          setVelocity(prev => ({
-            ...prev,
-            x: 0
-          }));
-          break;
-      }
+      keysPressed.delete(e.key.toLowerCase());
+      updateVelocity();
     };
+    
+    const updateVelocity = () => {
+      let xVel = 0;
+      let yVel = 0;
+      
+      if (keysPressed.has('arrowup') || keysPressed.has('w')) {
+        yVel = -characterSpeed;
+      }
+      if (keysPressed.has('arrowdown') || keysPressed.has('s')) {
+        yVel = characterSpeed;
+      }
+      if (keysPressed.has('arrowleft') || keysPressed.has('a')) {
+        xVel = -characterSpeed;
+      }
+      if (keysPressed.has('arrowright') || keysPressed.has('d')) {
+        xVel = characterSpeed;
+      }
+      
+      setVelocity({ x: xVel, y: yVel });
+    };
+    
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
+    
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
   }, [gameStarted, gameOver, levelCompleted, characterSpeed]);
+
+  // Add touch controls for mobile
+  useEffect(() => {
+    if (!gameStarted || gameOver || levelCompleted || !gameAreaRef.current) return;
+    
+    let touchStartPos = { x: 0, y: 0 };
+    let touchActive = false;
+    
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        touchStartPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        touchActive = true;
+      }
+    };
+    
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!touchActive || e.touches.length === 0) return;
+      
+      const touchX = e.touches[0].clientX;
+      const touchY = e.touches[0].clientY;
+      
+      const deltaX = touchX - touchStartPos.x;
+      const deltaY = touchY - touchStartPos.y;
+      
+      // Calculate velocity based on touch movement
+      const threshold = 10; // Minimum movement to trigger direction
+      let xVel = 0;
+      let yVel = 0;
+      
+      if (Math.abs(deltaX) > threshold || Math.abs(deltaY) > threshold) {
+        // Determine predominant direction
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+          // Horizontal movement
+          xVel = deltaX > 0 ? characterSpeed : -characterSpeed;
+        } else {
+          // Vertical movement
+          yVel = deltaY > 0 ? characterSpeed : -characterSpeed;
+        }
+      }
+      
+      setVelocity({ x: xVel, y: yVel });
+      touchStartPos = { x: touchX, y: touchY }; // Update start position for continuous movement
+    };
+    
+    const handleTouchEnd = () => {
+      touchActive = false;
+      setVelocity({ x: 0, y: 0 });
+    };
+    
+    const gameArea = gameAreaRef.current;
+    gameArea.addEventListener('touchstart', handleTouchStart);
+    gameArea.addEventListener('touchmove', handleTouchMove);
+    gameArea.addEventListener('touchend', handleTouchEnd);
+    
+    return () => {
+      gameArea.removeEventListener('touchstart', handleTouchStart);
+      gameArea.removeEventListener('touchmove', handleTouchMove);
+      gameArea.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [gameStarted, gameOver, levelCompleted, characterSpeed]);
+
   const startGame = () => {
     setGameStarted(true);
     setGameOver(false);

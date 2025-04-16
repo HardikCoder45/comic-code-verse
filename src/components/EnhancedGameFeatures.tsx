@@ -1,249 +1,390 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gamepad2, Sparkles, Trophy, Zap, Star, Rocket, Target, Gauge, Flame, Award, Medal, Badge, Crown, Gift, Users2 } from 'lucide-react';
-import { useSound } from '../contexts/SoundContext';
+import { 
+  Gamepad, Shield, Heart, Zap, Brain, Sparkles, ArrowUp, 
+  Star, Gift, Clock, Flame, Award, Gauge, Crosshair, Coffee
+} from 'lucide-react';
+import confetti from 'canvas-confetti';
 
-const EnhancedGameFeatures = () => {
-  const [expandedAward, setExpandedAward] = useState<number | null>(null);
-  const { playSound } = useSound();
-  
-  const handleAwardClick = (index: number) => {
-    playSound('click');
-    setExpandedAward(expandedAward === index ? null : index);
+// Power-up types
+export enum PowerUpType {
+  SPEED_BOOST = 'speedBoost',
+  BUG_SHIELD = 'bugShield',
+  DOUBLE_POINTS = 'doublePoints',
+  TIME_EXTENSION = 'timeExtension',
+  MAGNETIC_PULL = 'magneticPull',
+  EXTRA_LIFE = 'extraLife'
+}
+
+// PowerUp definitions
+export interface PowerUp {
+  id: string;
+  type: PowerUpType;
+  name: string;
+  description: string;
+  icon: React.ReactNode;
+  duration: number; // in seconds
+  color: string;
+  effect: string;
+  active: boolean;
+  timeLeft?: number;
+}
+
+// Game modifiers
+export interface GameModifiers {
+  playerSpeed: number;
+  playerSize: number;
+  scoreMultiplier: number;
+  collectionRadius: number;
+  bugRepellent: boolean;
+  timeFreeze: boolean;
+}
+
+// Game levels with enhanced features
+export interface EnhancedGameLevel {
+  name: string;
+  theme: 'tech' | 'fantasy' | 'space' | 'underwater' | 'cyberpunk';
+  backgroundEffect: 'particles' | 'gradient' | 'matrix' | 'stars' | 'bubbles';
+  specialAbility?: 'dash' | 'teleport' | 'freeze' | 'shield' | 'gravity';
+  boss?: {
+    name: string;
+    health: number;
+    attack: number;
+    special: string;
+    icon: React.ReactNode;
   };
+}
 
+// Character special abilities
+export interface SpecialAbility {
+  name: string;
+  icon: React.ReactNode;
+  description: string;
+  cooldown: number; // seconds
+  duration: number; // seconds
+  effect: (setModifiers: React.Dispatch<React.SetStateAction<GameModifiers>>) => void;
+  endEffect: (setModifiers: React.Dispatch<React.SetStateAction<GameModifiers>>) => void;
+}
+
+// Define available power-ups
+export const powerUps: PowerUp[] = [
+  {
+    id: 'speed_boost',
+    type: PowerUpType.SPEED_BOOST,
+    name: 'Speed Boost',
+    description: 'Move 50% faster for 10 seconds',
+    icon: <Zap size={20} />,
+    duration: 10,
+    color: '#3b82f6', // blue
+    effect: 'Increases movement speed by 50%',
+    active: false
+  },
+  {
+    id: 'bug_shield',
+    type: PowerUpType.BUG_SHIELD,
+    name: 'Bug Shield',
+    description: 'Immunity to bugs for 15 seconds',
+    icon: <Shield size={20} />,
+    duration: 15,
+    color: '#10b981', // green
+    effect: 'Provides immunity to bug collisions',
+    active: false
+  },
+  {
+    id: 'double_points',
+    type: PowerUpType.DOUBLE_POINTS,
+    name: 'Double Points',
+    description: 'Double all points for 20 seconds',
+    icon: <Star size={20} />,
+    duration: 20,
+    color: '#f59e0b', // amber
+    effect: 'Doubles points from all collections',
+    active: false
+  },
+  {
+    id: 'time_extension',
+    type: PowerUpType.TIME_EXTENSION,
+    name: 'Time Extension',
+    description: 'Adds 15 seconds to the level timer',
+    icon: <Clock size={20} />,
+    duration: 0, // instant effect
+    color: '#8b5cf6', // purple
+    effect: 'Adds 15 seconds to the level timer',
+    active: false
+  },
+  {
+    id: 'magnetic_pull',
+    type: PowerUpType.MAGNETIC_PULL,
+    name: 'Magnetic Pull',
+    description: 'Attracts nearby items for 12 seconds',
+    icon: <Crosshair size={20} />,
+    duration: 12,
+    color: '#ec4899', // pink
+    effect: 'Pulls nearby collectibles toward you',
+    active: false
+  },
+  {
+    id: 'extra_life',
+    type: PowerUpType.EXTRA_LIFE,
+    name: 'Extra Life',
+    description: 'Grants an additional life',
+    icon: <Heart size={20} />,
+    duration: 0, // instant effect
+    color: '#ef4444', // red
+    effect: 'Adds one extra life',
+    active: false
+  }
+];
+
+// Character special abilities
+export const specialAbilities: SpecialAbility[] = [
+  {
+    name: 'Coding Dash',
+    icon: <Flame size={24} />,
+    description: 'Dash forward at high speed, collecting everything in your path',
+    cooldown: 15,
+    duration: 3,
+    effect: (setModifiers) => {
+      setModifiers(prev => ({
+        ...prev,
+        playerSpeed: prev.playerSpeed * 3,
+        bugRepellent: true
+      }));
+    },
+    endEffect: (setModifiers) => {
+      setModifiers(prev => ({
+        ...prev,
+        playerSpeed: prev.playerSpeed / 3,
+        bugRepellent: false
+      }));
+    }
+  },
+  {
+    name: 'Skill Magnet',
+    icon: <Sparkles size={24} />,
+    description: 'Pull all skills towards you with increased collection radius',
+    cooldown: 20,
+    duration: 5,
+    effect: (setModifiers) => {
+      setModifiers(prev => ({
+        ...prev,
+        collectionRadius: prev.collectionRadius * 5
+      }));
+    },
+    endEffect: (setModifiers) => {
+      setModifiers(prev => ({
+        ...prev,
+        collectionRadius: prev.collectionRadius / 5
+      }));
+    }
+  },
+  {
+    name: 'Time Freeze',
+    icon: <Clock size={24} />,
+    description: 'Temporarily freeze all obstacles and enemies',
+    cooldown: 30,
+    duration: 4,
+    effect: (setModifiers) => {
+      setModifiers(prev => ({
+        ...prev,
+        timeFreeze: true
+      }));
+    },
+    endEffect: (setModifiers) => {
+      setModifiers(prev => ({
+        ...prev,
+        timeFreeze: false
+      }));
+    }
+  },
+  {
+    name: 'Debug Mode',
+    icon: <Brain size={24} />,
+    description: 'Double points and shield against bugs',
+    cooldown: 45,
+    duration: 7,
+    effect: (setModifiers) => {
+      setModifiers(prev => ({
+        ...prev,
+        scoreMultiplier: prev.scoreMultiplier * 2,
+        bugRepellent: true
+      }));
+    },
+    endEffect: (setModifiers) => {
+      setModifiers(prev => ({
+        ...prev,
+        scoreMultiplier: prev.scoreMultiplier / 2,
+        bugRepellent: false
+      }));
+    }
+  }
+];
+
+// Enhanced UI components
+interface PowerUpStatusProps {
+  activePowerUps: PowerUp[];
+}
+
+export const PowerUpStatus: React.FC<PowerUpStatusProps> = ({ activePowerUps }) => {
   return (
-    <div className="w-full bg-gradient-to-br from-indigo-900 to-purple-900 p-6 rounded-xl shadow-xl">
-      <h2 className="text-3xl font-bangers text-center text-white mb-6 flex items-center justify-center">
-        <Gamepad2 className="mr-2 text-yellow-400" size={32} />
-        Enhanced Portfolio Game Features
-      </h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {features.map((feature, index) => (
-          <motion.div
-            key={index}
-            className="bg-white/10 backdrop-blur-sm p-4 rounded-lg border border-white/20"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.15)' }}
-          >
-            <div className="flex items-start">
-              <div className="bg-gradient-to-br from-yellow-400 to-orange-500 p-3 rounded-full mr-4">
-                {feature.icon}
+    <AnimatePresence>
+      {activePowerUps.length > 0 && (
+        <motion.div 
+          className="mb-4 p-2 bg-gradient-to-r from-comic-blue to-comic-green text-white rounded-lg flex justify-center space-x-4"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+        >
+          {activePowerUps.map((powerUp) => (
+            <motion.div 
+              key={powerUp.id}
+              className="flex items-center"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            >
+              <div 
+                className="mr-2 w-8 h-8 rounded-full flex items-center justify-center" 
+                style={{ backgroundColor: powerUp.color }}
+              >
+                {powerUp.icon}
               </div>
               <div>
-                <h3 className="text-xl font-bangers text-yellow-300 mb-2">{feature.title}</h3>
-                <p className="text-white/80 text-sm">{feature.description}</p>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-      
-      {/* Awards Section */}
-      <div className="mt-10 mb-6">
-        <h2 className="text-3xl font-bangers text-center text-white mb-6 flex items-center justify-center">
-          <Trophy className="mr-2 text-yellow-400" size={32} />
-          Portfolio Achievements & Awards
-        </h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {awards.map((award, index) => (
-            <motion.div
-              key={index}
-              className={`relative overflow-hidden rounded-lg border ${
-                expandedAward === index 
-                  ? 'bg-gradient-to-br from-yellow-500/20 to-amber-700/30 border-yellow-300' 
-                  : 'bg-white/5 border-white/10'
-              } transition-all duration-300`}
-              whileHover={{ 
-                scale: 1.02, 
-                boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)' 
-              }}
-              layoutId={`award-card-${index}`}
-              onClick={() => handleAwardClick(index)}
-            >
-              {/* Top glow effect when expanded */}
-              {expandedAward === index && (
-                <motion.div 
-                  className="absolute inset-0 bg-gradient-to-b from-yellow-400/30 to-transparent opacity-0"
-                  animate={{ opacity: [0, 0.5, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
-              )}
-              
-              <motion.div className="p-4">
-                <div className="flex items-center mb-3">
-                  <div className={`p-3 rounded-full mr-3 ${
-                    expandedAward === index 
-                      ? 'bg-gradient-to-br from-yellow-400 to-amber-600' 
-                      : 'bg-white/10'
-                  } transition-colors duration-300`}>
-                    {award.icon}
+                <span className="font-comic text-xs font-bold block">{powerUp.name}</span>
+                {powerUp.timeLeft && powerUp.timeLeft > 0 && (
+                  <div className="w-16 h-1.5 bg-white/30 rounded-full overflow-hidden">
+                    <motion.div 
+                      className="h-full bg-white"
+                      initial={{ width: '100%' }}
+                      animate={{ width: '0%' }}
+                      transition={{ 
+                        duration: powerUp.timeLeft, 
+                        ease: 'linear' 
+                      }}
+                    />
                   </div>
-                  <h3 className={`font-bangers text-xl ${
-                    expandedAward === index ? 'text-yellow-300' : 'text-white'
-                  } transition-colors duration-300`}>
-                    {award.title}
-                  </h3>
-                </div>
-                
-                <AnimatePresence>
-                  {expandedAward === index ? (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="overflow-hidden"
-                    >
-                      <p className="text-white/80 text-sm mb-3">{award.description}</p>
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {award.tags.map((tag, idx) => (
-                          <span key={idx} className="text-xs bg-white/10 px-2 py-1 rounded text-white/70">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                      {award.unlockDate && (
-                        <div className="text-xs text-yellow-300/80 mt-2">
-                          Unlocked: {award.unlockDate}
-                        </div>
-                      )}
-                    </motion.div>
-                  ) : (
-                    <motion.p 
-                      className="text-white/60 text-sm truncate"
-                      exit={{ opacity: 0 }}
-                    >
-                      {award.description.substring(0, 60)}...
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-              
-              {/* Achievement rarity indicator */}
-              <div className="absolute top-2 right-2">
-                <div className={`rounded-full w-3 h-3 ${
-                  award.rarity === 'legendary' ? 'bg-amber-400 animate-pulse' :
-                  award.rarity === 'rare' ? 'bg-purple-400' :
-                  award.rarity === 'uncommon' ? 'bg-blue-400' : 'bg-gray-400'
-                }`} />
+                )}
               </div>
-              
-              {/* Click to expand hint */}
-              {expandedAward !== index && (
-                <div className="absolute bottom-1 right-2 text-white/40 text-xs">
-                  Click to expand
-                </div>
-              )}
             </motion.div>
           ))}
-        </div>
-      </div>
-      
-      <motion.div 
-        className="mt-8 p-4 bg-white/5 rounded-lg border border-white/10 text-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.9 }}
-      >
-        <p className="text-white font-comic">
-          Enjoy an immersive portfolio experience with our enhanced gaming features!
-          <span className="block mt-2 text-yellow-300">
-            <Star className="inline mr-1" size={16} /> Collect achievements to showcase your skills!
-          </span>
-        </p>
-      </motion.div>
-    </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
-const features = [
-  {
-    title: "Dynamic Skill Challenges",
-    description: "Complete mini-games that showcase specific portfolio skills with increasing difficulty levels.",
-    icon: <Target size={24} className="text-white" />
-  },
-  {
-    title: "Achievement System",
-    description: "Earn badges and achievements as you showcase different skills and project experiences.",
-    icon: <Trophy size={24} className="text-white" />
-  },
-  {
-    title: "Power-ups & Abilities",
-    description: "Unlock special abilities based on your strongest skills and experiences.",
-    icon: <Zap size={24} className="text-white" />
-  },
-  {
-    title: "Interactive Timeline",
-    description: "Navigate your career journey as an adventure path with milestone challenges.",
-    icon: <Rocket size={24} className="text-white" />
-  },
-  {
-    title: "Skill Tree Visualization",
-    description: "Explore your skills as interconnected nodes that grow as you progress.",
-    icon: <Sparkles size={24} className="text-white" />
-  },
-  {
-    title: "Performance Analytics",
-    description: "Track your progress and get insights on your portfolio performance.",
-    icon: <Gauge size={24} className="text-white" />
-  },
-];
+interface SpecialAbilityButtonProps {
+  ability: SpecialAbility;
+  onActivate: () => void;
+  cooldownRemaining: number;
+  isActive: boolean;
+}
 
-const awards = [
-  {
-    title: "Code Master",
-    description: "Achieved excellence in coding challenges across multiple programming languages with a perfect score in advanced algorithms.",
-    icon: <Crown size={24} className="text-white" />,
-    tags: ["Algorithms", "Problem Solving", "Multiple Languages"],
-    rarity: "legendary",
-    unlockDate: "April 10, 2025"
-  },
-  {
-    title: "Design Virtuoso",
-    description: "Created exceptional UI/UX designs that received recognition from the design community for innovation and user-centered approach.",
-    icon: <Award size={24} className="text-white" />,
-    tags: ["UI/UX", "Creative Design", "User Experience"],
-    rarity: "rare",
-    unlockDate: "March 22, 2025"
-  },
-  {
-    title: "Performance Guru",
-    description: "Optimized application performance resulting in 80% faster load times and significantly improved user experience metrics.",
-    icon: <Gauge size={24} className="text-white" />,
-    tags: ["Optimization", "Speed", "Technical Excellence"],
-    rarity: "rare",
-    unlockDate: "February 15, 2025"
-  },
-  {
-    title: "Full Stack Champion",
-    description: "Demonstrated mastery in both frontend and backend technologies, creating seamless end-to-end solutions with modern tech stacks.",
-    icon: <Badge size={24} className="text-white" />,
-    tags: ["Frontend", "Backend", "Database", "DevOps"],
-    rarity: "uncommon",
-    unlockDate: "January 30, 2025"
-  },
-  {
-    title: "Innovation Pioneer",
-    description: "Introduced groundbreaking features that redefined user interactions and set new standards for portfolio applications.",
-    icon: <Sparkles size={24} className="text-white" />,
-    tags: ["Innovation", "Creativity", "Technical Excellence"],
-    rarity: "legendary",
-    unlockDate: "December 12, 2024"
-  },
-  {
-    title: "Team Collaborator",
-    description: "Demonstrated exceptional teamwork skills, facilitating successful project completions through effective communication and leadership.",
-    icon: <Users2 size={24} className="text-white" />,
-    tags: ["Teamwork", "Communication", "Leadership"],
-    rarity: "uncommon",
-    unlockDate: "November 5, 2024"
-  },
-];
+export const SpecialAbilityButton: React.FC<SpecialAbilityButtonProps> = ({ 
+  ability, 
+  onActivate, 
+  cooldownRemaining,
+  isActive
+}) => {
+  return (
+    <motion.button
+      className={`relative overflow-hidden rounded-full w-14 h-14 border-2 border-black 
+        ${isActive 
+          ? 'bg-comic-pink shadow-[0_0_15px_rgba(236,72,153,0.7)]' 
+          : cooldownRemaining > 0 
+            ? 'bg-gray-300 cursor-not-allowed' 
+            : 'bg-comic-blue hover:bg-comic-blue/90'}`}
+      onClick={cooldownRemaining === 0 && !isActive ? onActivate : undefined}
+      whileHover={cooldownRemaining === 0 && !isActive ? { scale: 1.1 } : {}}
+      whileTap={cooldownRemaining === 0 && !isActive ? { scale: 0.95 } : {}}
+      initial={{ opacity: 0, scale: 0 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+    >
+      <div className="absolute inset-0 flex items-center justify-center z-10">
+        {ability.icon}
+      </div>
+      
+      {/* Cooldown overlay */}
+      {cooldownRemaining > 0 && (
+        <motion.div 
+          className="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-bold"
+          initial={{ y: '100%' }}
+          animate={{ y: '0%' }}
+          transition={{ duration: ability.cooldown, ease: 'linear' }}
+        >
+          {cooldownRemaining}
+        </motion.div>
+      )}
+      
+      {/* Active indicator pulse */}
+      {isActive && (
+        <motion.div 
+          className="absolute inset-0 bg-comic-pink"
+          animate={{ 
+            opacity: [0.7, 0.3, 0.7], 
+            scale: [1, 1.1, 1] 
+          }}
+          transition={{ 
+            duration: 1.5, 
+            repeat: Infinity,
+            ease: 'easeInOut' 
+          }}
+        />
+      )}
+      
+      <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+        <span className="text-xs font-comic">{ability.name}</span>
+      </div>
+    </motion.button>
+  );
+};
 
-export default EnhancedGameFeatures;
+// Utility functions
+export const triggerLevelCompleteEffect = () => {
+  // Multiple confetti bursts
+  const duration = 3 * 1000;
+  const animationEnd = Date.now() + duration;
+  const colors = ['#3b82f6', '#ec4899', '#f97316', '#10b981', '#8b5cf6'];
+  
+  const randomInRange = (min: number, max: number) => {
+    return Math.random() * (max - min) + min;
+  };
+
+  (function frame() {
+    confetti({
+      particleCount: 5,
+      angle: randomInRange(0, 360),
+      spread: randomInRange(50, 100),
+      origin: { x: randomInRange(0.1, 0.9), y: randomInRange(0.1, 0.9) },
+      colors: [colors[Math.floor(Math.random() * colors.length)]],
+      zIndex: 9999,
+      gravity: 0.7,
+      scalar: 1.5
+    });
+    
+    if (Date.now() < animationEnd) {
+      requestAnimationFrame(frame);
+    }
+  }());
+};
+
+export const generateRandomPowerUp = (): PowerUp => {
+  const randomPowerUp = { ...powerUps[Math.floor(Math.random() * powerUps.length)] };
+  randomPowerUp.id = `${randomPowerUp.id}_${Date.now()}`;
+  randomPowerUp.active = true;
+  randomPowerUp.timeLeft = randomPowerUp.duration;
+  return randomPowerUp;
+};
+
+export default {
+  PowerUpType,
+  powerUps,
+  specialAbilities,
+  PowerUpStatus,
+  SpecialAbilityButton,
+  triggerLevelCompleteEffect,
+  generateRandomPowerUp
+};

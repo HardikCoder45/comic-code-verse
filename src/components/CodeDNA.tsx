@@ -357,18 +357,31 @@ const CodeDNA = () => {
       setMousePosition({ x: mouseX, y: mouseY });
       
       // Check if mouse is over any node
-      const hoveredNode = nodes.find(node => {
+      let foundHoveredNode = false;
+      for (const node of nodes) {
+        // Skip nodes that are not in the selected category
+        if (selectedCategory && node.category !== selectedCategory) continue;
+        
         const dx = node.x - mouseX;
         const dy = node.y - mouseY;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        return distance <= node.value + (activeNode && activeNode.id === node.id ? 5 : 0);
-      });
+        const hoverRadius = node.value + (activeNode && activeNode.id === node.id ? 5 : 0);
+        
+        if (distance <= hoverRadius) {
+          setHoveredNode(node);
+          foundHoveredNode = true;
+          break;
+        }
+      }
       
-      setHoveredNode(hoveredNode || null);
+      // If no node is being hovered, clear the hover state
+      if (!foundHoveredNode) {
+        setHoveredNode(null);
+      }
       
       // Change cursor based on hover state
       if (canvasRef.current) {
-        canvasRef.current.style.cursor = hoveredNode ? 'pointer' : 'default';
+        canvasRef.current.style.cursor = foundHoveredNode ? 'pointer' : 'default';
       }
     };
 
