@@ -8,23 +8,11 @@ interface ComicLoadingProps {
 }
 
 const ComicLoading = ({ message = "Loading..." }: ComicLoadingProps) => {
-  // Use try/catch to handle cases where SoundProvider might not be available
-  let playSound: ((type: any) => void) | undefined;
-  
-  try {
-    const soundContext = useSound();
-    playSound = soundContext.playSound;
-  } catch (error) {
-    // SoundProvider not available, we'll just continue without sound
-    console.log('Sound provider not available for loading animation');
-  }
  
   useEffect(() => {
-    // Play page flip sound when component mounts, but only if playSound is available
-    if (playSound) {
-      playSound('pageFlip');
-    }
-  }, [playSound]);
+    // Play page flip sound when component mounts
+ 
+  }, []);
 
   return (
     <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -42,9 +30,7 @@ const ComicLoading = ({ message = "Loading..." }: ComicLoadingProps) => {
             repeat: Infinity
           }}
           onAnimationIteration={() => {
-            if (playSound) {
-              playSound('pageFlip');
-            }
+            playSound('pageFlip');
           }}
         >
           {/* Book covers and pages */}
@@ -87,7 +73,7 @@ const ComicLoading = ({ message = "Loading..." }: ComicLoadingProps) => {
         </motion.p>
       </div>
 
-      <style jsx>{`
+      <style >{`jsx
         .perspective-1000 {
           perspective: 1000px;
         }

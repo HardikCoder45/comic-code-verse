@@ -17,15 +17,10 @@ interface HTMLAttributes {
 }
 
 // Fix for X component in CodeDNA
-declare namespace JSX {
-  interface IntrinsicElements {
-    'x': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
-  }
-}
-
-// Extended React properties
-declare namespace React {
-  interface HTMLAttributes<T> {
-    inline?: boolean;
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'X': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+    }
   }
 }

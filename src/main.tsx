@@ -1,11 +1,11 @@
+
 import { createRoot } from 'react-dom/client';
 import { StrictMode, lazy, Suspense } from 'react';
 import App from './App.tsx';
-import './styles/theme.css'; // Import theme.css first
-import './index.css'; // Then import index.css
+import './index.css';
 import './styles/animations.css';
+import './styles/theme.css';
 import ComicLoading from './components/ComicLoading';
-import { SoundProvider } from './contexts/SoundContext';
 
 // Performance optimization with code splitting
 const LazyApp = lazy(() => import('./App.tsx'));
@@ -79,14 +79,12 @@ if (isMobile) {
   document.documentElement.classList.add('is-desktop-device');
 }
 
-// Mount the application with the SoundProvider at root level
+// Mount the application
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <SoundProvider>
-      <Suspense fallback={<ComicLoading message="Assembling the panels..." />}>
-        <LazyApp />
-      </Suspense>
-    </SoundProvider>
+    <Suspense fallback={<ComicLoading message="Assembling the panels..." />}>
+      <LazyApp />
+    </Suspense>
   </StrictMode>
 );
 
