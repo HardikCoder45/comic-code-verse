@@ -4,6 +4,7 @@ import { StrictMode, lazy, Suspense } from 'react';
 import App from './App.tsx';
 import './index.css';
 import './styles/animations.css';
+import './styles/theme.css';
 import ComicLoading from './components/ComicLoading';
 
 // Performance optimization with code splitting
@@ -91,6 +92,14 @@ createRoot(document.getElementById("root")!).render(
 document.addEventListener('keydown', (e) => {
   // Handle "?" key press for help
   if (e.key === '?') {
-    alert('Keyboard Shortcuts:\n\n• ? - Show this help\n• Home - Go to homepage\n• End - Go to contact page\n• 1-5 - Navigate to different sections');
+    alert('Keyboard Shortcuts:\n\n• ? - Show this help\n• Home - Go to homepage\n• End - Go to contact page\n• 1-5 - Navigate to different sections\n• m - Toggle mute/unmute\n• t - Toggle theme');
+  }
+  
+  // Add theme toggle shortcut
+  if (e.key === 't' && (e.ctrlKey || e.metaKey)) {
+    const html = document.querySelector('html');
+    if (html) {
+      html.classList.toggle('dark');
+    }
   }
 });

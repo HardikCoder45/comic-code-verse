@@ -20,6 +20,7 @@ import AwardsShowcase from "./components/AwardsShowcase";
 
 // Providers
 import { SoundProvider } from "./contexts/SoundContext";
+import { ThemeProvider } from "./contexts/ThemeContext"; 
 
 // Pages
 import Landing from "./pages/Landing";
@@ -56,56 +57,58 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <SoundProvider>
-          <PerformanceOptimizer>
-            <Router>
-              <Routes>
-                <Route path="/" element={<BookLayout isLandingPage={true}><Landing /></BookLayout>} />
-                <Route path="/game-hub" element={<PortfolioGameHub />} />
-                <Route path="/code-dna" element={<CodeDNA />} />
-                <Route path="/awards" element={<AwardsShowcase />} />
-                <Route path="*" element={
-                  <div className="min-h-screen w-full flex relative bg-blue-50">
-                    <Suspense fallback={
-                      <div className="flex items-center justify-center w-full h-screen bg-blue-50">
-                        <div className="text-center">
-                          <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-                          <p className="text-blue-600 font-comic">Loading...</p>
+        <ThemeProvider>
+          <SoundProvider>
+            <PerformanceOptimizer>
+              <Router>
+                <Routes>
+                  <Route path="/" element={<BookLayout isLandingPage={true}><Landing /></BookLayout>} />
+                  <Route path="/game-hub" element={<PortfolioGameHub />} />
+                  <Route path="/code-dna" element={<CodeDNA />} />
+                  <Route path="/awards" element={<AwardsShowcase />} />
+                  <Route path="*" element={
+                    <div className="min-h-screen w-full flex relative bg-blue-50 dark:bg-gray-900 transition-colors duration-300">
+                      <Suspense fallback={
+                        <div className="flex items-center justify-center w-full h-screen bg-blue-50 dark:bg-gray-900 transition-colors duration-300">
+                          <div className="text-center">
+                            <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                            <p className="text-blue-600 dark:text-blue-400 font-comic">Loading...</p>
+                          </div>
                         </div>
-                      </div>
-                    }>
-                      <main className="flex-1 ml-0 w-full">
-                        <BookLayout>
-                          <Routes>
-                            <Route path="/home" element={<Home />} />
-                            <Route path="/projects" element={<Projects />} />
-                            <Route path="/show-project/:id" element={<ProjectDetails />} />
-                            <Route path="/about" element={<About />} />
-                            <Route path="/skills" element={<Skills />} />
-                            <Route path="/timeline" element={<TimeTravel />} />
-                            <Route path="/code-samples" element={<CodeSandboxes />} />
-                            <Route path="/dna" element={<CodeDNA />} />
-                            <Route path="/game" element={<PortfolioGame />} />
-                            <Route path="/game-features" element={<EnhancedGameFeatures />} />
-                            <Route path="/custom-portfolio" element={<CustomPortfolio />} />
-                            <Route path="/contact" element={<Contact />} />
-                            <Route path="/awards" element={<AwardsShowcase />} />
-                            <Route path="*" element={<NotFound />} />
-                          </Routes>
-                        </BookLayout>
-                      </main>
-                    </Suspense>
-                    <ComicStripNavigation />
-                    <InteractiveAvatar />
-                    <VoiceControl />
-                    <PageSlider />
-                    <ChatBot />
-                  </div>
-                } />
-              </Routes>
-            </Router>
-          </PerformanceOptimizer>
-        </SoundProvider>
+                      }>
+                        <main className="flex-1 ml-0 w-full">
+                          <BookLayout>
+                            <Routes>
+                              <Route path="/home" element={<Home />} />
+                              <Route path="/projects" element={<Projects />} />
+                              <Route path="/show-project/:id" element={<ProjectDetails />} />
+                              <Route path="/about" element={<About />} />
+                              <Route path="/skills" element={<Skills />} />
+                              <Route path="/timeline" element={<TimeTravel />} />
+                              <Route path="/code-samples" element={<CodeSandboxes />} />
+                              <Route path="/dna" element={<CodeDNA />} />
+                              <Route path="/game" element={<PortfolioGame />} />
+                              <Route path="/game-features" element={<EnhancedGameFeatures />} />
+                              <Route path="/custom-portfolio" element={<CustomPortfolio />} />
+                              <Route path="/contact" element={<Contact />} />
+                              <Route path="/awards" element={<AwardsShowcase />} />
+                              <Route path="*" element={<NotFound />} />
+                            </Routes>
+                          </BookLayout>
+                        </main>
+                      </Suspense>
+                      <ComicStripNavigation />
+                      <InteractiveAvatar />
+                      <VoiceControl />
+                      <PageSlider />
+                      <ChatBot />
+                    </div>
+                  } />
+                </Routes>
+              </Router>
+            </PerformanceOptimizer>
+          </SoundProvider>
+        </ThemeProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
